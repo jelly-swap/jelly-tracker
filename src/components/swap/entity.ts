@@ -1,4 +1,14 @@
-import { Column, Entity, UpdateDateColumn, Index, ObjectIdColumn, ObjectID } from 'typeorm';
+import {
+    Column,
+    Entity,
+    UpdateDateColumn,
+    Index,
+    ObjectIdColumn,
+    ObjectID,
+    AfterInsert,
+    BeforeInsert,
+    AfterLoad,
+} from 'typeorm';
 
 @Entity('swap')
 export default class Swap {

@@ -6,6 +6,5 @@ export default () => {
     const emitter = Emitter.Instance;
     emitter.on('SWAPS', async (swaps) => {
         await swapService.create(swaps);
-        emitter.emit('SWAPS_COMPLETED');
     });
 };

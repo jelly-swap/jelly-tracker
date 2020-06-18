@@ -18,7 +18,6 @@ export default class WebSocketServer {
 
     wsOn() {
         this.wss.on('connection', (ws: WebSocket) => {
-            console.log('gg');
             const extWs = ws as ExtWebSocket;
 
             extWs.isAlive = true;

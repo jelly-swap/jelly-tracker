@@ -1,14 +1,18 @@
 import { Contract, providers } from 'ethers';
 
 import Config from './config';
+
+import { getRefund, getWithdraw, getSwap } from './utils';
+
 import Swap from '../../components/swap/entity';
 import Withdraw from '../../components/withdraw/entity';
 import Refund from '../../components/refund/entity';
+
 import Emitter from '../../websocket/emitter';
-import { getRefund, getWithdraw, getSwap } from './utils';
 
 export default class EthereumEvent {
-    private provider: providers.BaseProvider;
+    public readonly syncBlocksMargin = Config.syncBlocksMargin;
+    public provider: providers.BaseProvider;
     private contract: Contract;
     private emitter: Emitter;
 
@@ -16,6 +20,10 @@ export default class EthereumEvent {
         this.provider = new providers.InfuraProvider('homestead', Config.infuraKey);
         this.contract = new Contract(Config.contractAddress, Config.abi, this.provider);
         this.emitter = Emitter.Instance;
+    }
+
+    async getBlock() {
+        return await this.provider.getBlockNumber();
     }
 
     subscribe() {
@@ -172,10 +180,8 @@ export default class EthereumEvent {
             }
         });
 
-        this.emitter.emit('SWAPS', swaps);
-        this.emitter.on('SWAPS_COMPLETED', () => {
-            this.emitter.emit('WITHDRAWS', withdraws);
-            this.emitter.emit('REFUNDS', refunds);
-        });
+        await this.emitter.emitAsync('SWAPS', swaps);
+        await this.emitter.emitAsync('WITHDRAWS', withdraws);
+        await this.emitter.emitAsync('REFUNDS', refunds);
     }
 }

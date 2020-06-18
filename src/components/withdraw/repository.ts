@@ -9,21 +9,22 @@ export default class WithdrawRepository {
 
     public async create(withdraw: Withdraw | Withdraw[]) {
         if (withdraw instanceof Array) {
-            const withdraws = withdraw.reduce((p, c) => {
-                p.push({ insertOne: { ...c } });
-                return p;
-            }, [] as any);
-
             try {
-                return await this.withdrawRepository.bulkWrite(withdraws, { ordered: false });
+                if (withdraw.length > 0) {
+                    return await this.withdrawRepository.insertMany(withdraw, { ordered: false } as any);
+                }
             } catch (error) {
-                Log.error(`Error while bulk saving withdraws: ${error}`);
+                if (error?.code !== 11000) {
+                    Log.error(`Error while bulk saving withdraws: ${error}`);
+                }
             }
         } else {
             try {
                 return await this.withdrawRepository.save(withdraw);
             } catch (error) {
-                Log.error(`Error while saving the Withdraw: ${error}`);
+                if (error?.code !== 11000) {
+                    Log.error(`Error while bulk saving withdraws: ${error}`);
+                }
             }
         }
     }

@@ -3,7 +3,6 @@ import { getMongoRepository } from 'typeorm';
 import Swap from './entity';
 
 import Log from '../../logger';
-import { time } from 'console';
 
 export default class SwapRepository {
     private swapRepository = getMongoRepository(Swap);
@@ -42,38 +41,34 @@ export default class SwapRepository {
 
     async create(swap: Swap | Swap[]) {
         if (swap instanceof Array) {
-            const swaps = swap.reduce((p, c) => {
-                p.push({ insertOne: { ...c } });
-                return p;
-            }, [] as any);
-
             try {
-                return await this.swapRepository.bulkWrite(swaps, { ordered: false });
+                if (swap.length > 0) {
+                    return await this.swapRepository.insertMany(swap, { ordered: false } as any);
+                }
             } catch (error) {
-                Log.error(`Error while bulk saving swaps: ${error}`);
+                if (error?.code !== 11000) {
+                    Log.error(`Error while bulk saving swaps: ${error}`);
+                }
             }
         } else {
             try {
                 return await this.swapRepository.save(swap);
             } catch (error) {
-                Log.error(`Error while saving the Swap: ${error}`);
+                if (error?.code !== 11000) {
+                    Log.error(`Error while bulk saving swaps: ${error}`);
+                }
             }
         }
     }
 
     async updateMany(ids: string[], status: number) {
         try {
-            const query = ids.reduce((p, id) => {
-                p.push({
-                    updateOne: {
-                        filter: { id },
-                        update: { $set: { status } },
-                    },
-                });
-                return p;
-            }, [] as any);
-
-            return await this.swapRepository.bulkWrite(query);
+            return await this.swapRepository.updateMany(
+                {
+                    id: { $in: ids },
+                },
+                { $set: { status } }
+            );
         } catch (error) {
             Log.error(`Error while updating many swaps: ${error}`);
         }

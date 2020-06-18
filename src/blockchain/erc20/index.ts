@@ -8,14 +8,19 @@ import Emitter from '../../websocket/emitter';
 import { getRefund, getWithdraw, getSwap, addressToToken } from './utils';
 
 export default class Erc20Event {
+    public readonly syncBlocksMargin = Config.syncBlocksMargin;
     private provider: providers.BaseProvider;
     private contract: Contract;
     private emitter: Emitter;
 
-    constructor() {
-        this.provider = new providers.InfuraProvider('homestead', Config.infuraKey);
+    constructor(provider?: providers.BaseProvider) {
+        this.provider = provider || new providers.InfuraProvider('homestead', Config.infuraKey);
         this.contract = new Contract(Config.contractAddress, Config.abi, this.provider);
         this.emitter = Emitter.Instance;
+    }
+
+    async getBlock() {
+        return await this.provider.getBlockNumber();
     }
 
     subscribe() {
@@ -179,10 +184,8 @@ export default class Erc20Event {
             }
         });
 
-        this.emitter.emit('SWAPS', swaps);
-        this.emitter.on('SWAPS_COMPLETED', () => {
-            this.emitter.emit('WITHDRAWS', withdraws);
-            this.emitter.emit('REFUNDS', refunds);
-        });
+        await this.emitter.emitAsync('SWAPS', swaps);
+        await this.emitter.emitAsync('WITHDRAWS', withdraws);
+        await this.emitter.emitAsync('REFUNDS', refunds);
     }
 }

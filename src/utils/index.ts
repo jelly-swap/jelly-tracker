@@ -36,8 +36,6 @@ export const applyMiddleware = (middlewareWrappers: Wrapper[], router: Router) =
 
 export const applyRoutes = (routes: Route[], router: Router) => {
     routes.forEach((route) => {
-        console.log(route);
-
         const { method, controller, action } = route;
 
         (router as any)[method](route.route, (req: Request, res: Response, next: () => void) => {

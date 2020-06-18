@@ -21,8 +21,7 @@ import SwapHandler from './components/swap/handler';
 import WithdrawHandler from './components/withdraw/handler';
 import RefundHandler from './components/refund/handler';
 
-import EthereumEvent from './blockchain/ethereum';
-import Erc20Event from './blockchain/erc20';
+import Blockchain from './blockchain';
 
 createConnection(dbConfig as any)
     .then(async () => {
@@ -44,8 +43,7 @@ createConnection(dbConfig as any)
         WithdrawHandler();
         RefundHandler();
 
-        new EthereumEvent().subscribe();
-        new Erc20Event().subscribe();
+        Blockchain();
 
         await startTasks([]);
     })
