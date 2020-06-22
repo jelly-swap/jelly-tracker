@@ -1,11 +1,21 @@
-import { getMongoRepository } from 'typeorm';
+import {
+    getMongoRepository,
+    MongoRepository,
+    UpdateEvent,
+    ObjectLiteral,
+    ReplaceOneOptions,
+    UpdateWriteOpResult,
+    getCustomRepository,
+    EntityRepository,
+} from 'typeorm';
 
 import Swap from './entity';
 
 import Log from '../../logger';
+import { time } from 'console';
 
 export default class SwapRepository {
-    private swapRepository = getMongoRepository(Swap);
+    private swapRepository = getCustomRepository(CustomSwapRepository);
 
     async getAll() {
         return await this.swapRepository.find();
@@ -22,7 +32,21 @@ export default class SwapRepository {
     async getByAddressAfter(address: string, timestamp: string) {
         return await this.swapRepository.find({
             where: {
-                $and: [{ $or: [{ receiver: address }, { sender: address }] }, { expiration: { $gte: timestamp } }],
+                $and: [
+                    { $or: [{ receiver: address }, { sender: address }] },
+                    { expiration: { $gte: Number(timestamp) } },
+                ],
+            },
+        });
+    }
+
+    async getByAddressesAfter(addresses: string[], timestamp: string) {
+        return await this.swapRepository.find({
+            where: {
+                $and: [
+                    { $or: [{ receiver: { $in: addresses } }, { sender: { $in: addresses } }] },
+                    { expiration: { $gte: Number(timestamp) } },
+                ],
             },
         });
     }
@@ -76,9 +100,30 @@ export default class SwapRepository {
 
     async updateOne(id: string, status: number) {
         try {
-            return await this.swapRepository.updateOne({ id }, { status });
+            console.log(id, status);
+            const result = await this.swapRepository.updateOne({ id }, { $set: { status } });
+            return result;
         } catch (error) {
             Log.error(`Error while updating the swap: ${error}`);
         }
+    }
+}
+
+@EntityRepository(Swap)
+export class CustomSwapRepository extends MongoRepository<Swap> {
+    async updateOne(
+        query: ObjectLiteral,
+        update: ObjectLiteral,
+        options?: ReplaceOneOptions
+    ): Promise<UpdateWriteOpResult> {
+        const result = await super.updateOne(query, update, options);
+
+        if (result.modifiedCount > 0) {
+            this.manager.connection.subscribers.forEach((subscriber) =>
+                subscriber.afterUpdate({ ...update['$set'], ...query } as any)
+            );
+        }
+
+        return result;
     }
 }

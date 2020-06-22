@@ -1,4 +1,5 @@
 import { EventSubscriber, InsertEvent, UpdateEvent, EntitySubscriberInterface } from 'typeorm';
+import Emitter from '../../websocket/emitter';
 
 @EventSubscriber()
 export class EverythingSubscriber implements EntitySubscriberInterface {
@@ -6,13 +7,13 @@ export class EverythingSubscriber implements EntitySubscriberInterface {
      * Called after entity insertion.
      */
     afterInsert(event: InsertEvent<any>) {
-        console.log(`AFTER ENTITY INSERTED: `, event.entity);
+        Emitter.Instance.emit('WS_MESSAGE', { topic: event.metadata.targetName, data: event.entity });
     }
 
     /**
      * Called after entity insertion.
      */
     afterUpdate(event: UpdateEvent<any>) {
-        console.log(`AFTER ENTITY UPDATED: `, event.entity);
+        Emitter.Instance.emit('WS_MESSAGE', { topic: 'Update', data: event });
     }
 }

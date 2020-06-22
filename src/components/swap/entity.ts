@@ -8,6 +8,8 @@ import {
     AfterInsert,
     BeforeInsert,
     AfterLoad,
+    AfterUpdate,
+    BeforeUpdate,
 } from 'typeorm';
 
 @Entity('swap')
@@ -31,7 +33,7 @@ export default class Swap {
     outputAmount: string;
 
     @Column()
-    expiration: string;
+    expiration: number;
 
     @Column()
     @Index({ unique: true })
@@ -67,7 +69,7 @@ export default class Swap {
         blockNumber: number,
         inputAmount: string,
         outputAmount: string,
-        expiration: string,
+        expiration: number,
         id: string,
         hashLock: string,
         sender: string,
@@ -88,7 +90,7 @@ export default class Swap {
         this.sender = sender?.toLowerCase();
         this.receiver = receiver?.toLowerCase();
         this.outputNetwork = outputNetwork;
-        this.outputAddress = outputAddress;
+        this.outputAddress = outputAddress?.toLowerCase();
         this.refundAddress = refundAddress?.toLowerCase();
         this.status = status;
     }

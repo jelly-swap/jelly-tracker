@@ -25,7 +25,7 @@ export const matchSwaps = (swaps: any) => {
     }, []);
 };
 
-export const matchSwapsBySender = (swaps: any[], sender: string) => {
+export const matchSwapsBySender = (swaps: any[], sender: string | string[]) => {
     return swaps.reduce((result: any[], swap: any, idx: number) => {
         const { network, hashLock } = swap;
         let hasMatch = false;
@@ -36,11 +36,19 @@ export const matchSwapsBySender = (swaps: any[], sender: string) => {
 
                 if (hashLock === nextSwap.hashLock && network === nextSwap.outputNetwork) {
                     const { matched, ...outputSwap } = nextSwap;
-
-                    if (compareAddress(swap.sender, sender)) {
-                        result.push({ ...swap, outputSwap });
+                    if (sender instanceof Array) {
+                        const found = sender.some((s) => {
+                            return compareAddress(swap.sender, s);
+                        });
+                        if (found) {
+                            result.push({ ...swap, outputSwap });
+                        }
                     } else {
-                        result.push({ ...outputSwap, outputSwap: swap });
+                        if (compareAddress(swap.sender, sender)) {
+                            result.push({ ...swap, outputSwap });
+                        } else {
+                            result.push({ ...outputSwap, outputSwap: swap });
+                        }
                     }
 
                     hasMatch = true;

@@ -15,12 +15,12 @@ export default class SwapController {
 
     getByAddress(request: Request, response: Response, next: NextFunction) {
         const { address } = request.params;
-        return this.swapService.getByAddress(address.toLowerCase());
+        return this.swapService.getByAddress(address);
     }
 
     getByAddressAfter(request: Request, response: Response, next: NextFunction) {
         const { address, expiration } = request.params;
-        return this.swapService.getByAddressAfter(address.toLowerCase(), expiration);
+        return this.swapService.getByAddressAfter(address, expiration);
     }
 
     getByStatus(request: Request, response: Response, next: NextFunction) {

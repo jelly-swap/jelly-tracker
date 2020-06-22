@@ -3,6 +3,7 @@ import Swap from './entity';
 import Refund from '../refund/entity';
 import Withdraw from '../withdraw/entity';
 import { matchSwaps, matchSwapsBySender } from '../../utils/common';
+import e from 'express';
 
 export default class SwapService {
     private swapRepository = new SwapRepository();
@@ -13,13 +14,21 @@ export default class SwapService {
     }
 
     async getByAddress(address: string) {
-        const result = await this.swapRepository.getByAddress(address);
+        const result = await this.swapRepository.getByAddress(address.toLowerCase());
         return matchSwapsBySender(result, address);
     }
 
     async getByAddressAfter(address: string, timestamp: string) {
-        const result = await this.swapRepository.getByAddressAfter(address, timestamp);
-        return matchSwapsBySender(result, address);
+        const addresses = address.split(';').map((a) => a.toLowerCase());
+        const isMoreThanOneAddress = addresses.length > 1;
+
+        if (isMoreThanOneAddress) {
+            const result = await this.swapRepository.getByAddressesAfter(addresses, timestamp);
+            return matchSwapsBySender(result, addresses);
+        } else {
+            const result = await this.swapRepository.getByAddressAfter(addresses[0], timestamp);
+            return matchSwapsBySender(result, addresses[0]);
+        }
     }
 
     async getByStatus(status: number) {
@@ -28,7 +37,7 @@ export default class SwapService {
     }
 
     async getByAddressAndStatus(address: string, status: number) {
-        const result = await this.swapRepository.getByAddressAndStatus(address, status);
+        const result = await this.swapRepository.getByAddressAndStatus(address.toLowerCase(), status);
         return matchSwaps(result);
     }
 

@@ -67,7 +67,7 @@ export default class BitcoinEvent {
                     c.blockHeight,
                     c.inputAmount,
                     c.outputAmount,
-                    c.expiration,
+                    Number(c.expiration),
                     c.id,
                     c.hashLock,
                     c.sender,

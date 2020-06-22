@@ -26,7 +26,7 @@ export default class WebSocketServer {
                 extWs.isAlive = true;
             });
 
-            this.eventEmiter.on('message', (msg) => {
+            this.eventEmiter.on('WS_MESSAGE', (msg) => {
                 if (ws.readyState === ws.OPEN) {
                     ws.send(JSON.stringify(msg));
                     Log.info(`WebSocket: ${JSON.stringify(msg)}`);
