@@ -1,16 +1,4 @@
-import {
-    Column,
-    Entity,
-    UpdateDateColumn,
-    Index,
-    ObjectIdColumn,
-    ObjectID,
-    AfterInsert,
-    BeforeInsert,
-    AfterLoad,
-    AfterUpdate,
-    BeforeUpdate,
-} from 'typeorm';
+import { Column, Entity, UpdateDateColumn, Index, ObjectIdColumn, ObjectID } from 'typeorm';
 
 @Entity('swap')
 export default class Swap {
@@ -62,6 +50,9 @@ export default class Swap {
 
     @UpdateDateColumn()
     createdAt: Date;
+
+    @Column()
+    completenessTransactionHash?: string;
 
     constructor(
         network: string,

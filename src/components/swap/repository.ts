@@ -12,7 +12,6 @@ import {
 import Swap from './entity';
 
 import Log from '../../logger';
-import { time } from 'console';
 
 export default class SwapRepository {
     private swapRepository = getCustomRepository(CustomSwapRepository);
@@ -85,23 +84,30 @@ export default class SwapRepository {
         }
     }
 
-    async updateMany(ids: string[], status: number) {
+    async updateMany(data: any[], status: number) {
         try {
-            return await this.swapRepository.updateMany(
-                {
-                    id: { $in: ids },
-                },
-                { $set: { status } }
-            );
+            const query = data.reduce((p: ObjectLiteral[], c) => {
+                p.push({
+                    updateOne: {
+                        filter: { id: c.id },
+                        update: { $set: { status, completenessTransactionHash: c.transactionHash } },
+                    },
+                });
+                return p;
+            }, [] as any);
+
+            return await this.swapRepository.bulkWrite(query, { ordered: false });
         } catch (error) {
             Log.error(`Error while updating many swaps: ${error}`);
         }
     }
 
-    async updateOne(id: string, status: number) {
+    async updateOne(id: string, status: number, txHash: string) {
         try {
-            console.log(id, status);
-            const result = await this.swapRepository.updateOne({ id }, { $set: { status } });
+            const result = await this.swapRepository.updateOne(
+                { id },
+                { $set: { status, completenessTransactionHash: txHash } }
+            );
             return result;
         } catch (error) {
             Log.error(`Error while updating the swap: ${error}`);

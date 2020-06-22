@@ -47,25 +47,17 @@ export default class SwapService {
 
     async onRefund(refund: Refund | Refund[]) {
         if (refund instanceof Array) {
-            const ids = refund.reduce((p, c) => {
-                p.push(c.id);
-                return p;
-            }, [] as any);
-            return await this.swapRepository.updateMany(ids, 2);
+            return await this.swapRepository.updateMany(refund, 2);
         } else {
-            return await this.swapRepository.updateOne(refund.id, 2);
+            return await this.swapRepository.updateOne(refund.id, 2, refund.transactionHash);
         }
     }
 
     async onWithdraw(withdraw: Withdraw | Withdraw[]) {
         if (withdraw instanceof Array) {
-            const ids = withdraw.reduce((p, c) => {
-                p.push(c.id);
-                return p;
-            }, [] as any);
-            return await this.swapRepository.updateMany(ids, 3);
+            return await this.swapRepository.updateMany(withdraw, 3);
         } else {
-            return await this.swapRepository.updateOne(withdraw.id, 3);
+            return await this.swapRepository.updateOne(withdraw.id, 3, withdraw.transactionHash);
         }
     }
 }
