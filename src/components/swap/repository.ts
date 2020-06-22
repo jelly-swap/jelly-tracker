@@ -96,7 +96,9 @@ export default class SwapRepository {
                 return p;
             }, [] as any);
 
-            return await this.swapRepository.bulkWrite(query, { ordered: false });
+            if (query.length > 0) {
+                return await this.swapRepository.bulkWrite(query, { ordered: false });
+            }
         } catch (error) {
             Log.error(`Error while updating many swaps: ${error}`);
         }
