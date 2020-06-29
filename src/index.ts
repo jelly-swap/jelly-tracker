@@ -22,6 +22,7 @@ import WithdrawHandler from './components/withdraw/handler';
 import RefundHandler from './components/refund/handler';
 
 import Blockchain from './blockchain';
+import { StatusTracker } from './components/swap/task';
 
 createConnection(dbConfig as any)
     .then(async () => {
@@ -45,7 +46,7 @@ createConnection(dbConfig as any)
 
         Blockchain();
 
-        await startTasks([]);
+        await startTasks([new StatusTracker()]);
     })
     .catch((error) => {
         console.log(error);

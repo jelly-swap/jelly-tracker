@@ -1,4 +1,5 @@
 import { Column, Entity, UpdateDateColumn, Index, ObjectIdColumn, ObjectID } from 'typeorm';
+import { STATUS } from './constants';
 
 @Entity('swap')
 export default class Swap {
@@ -68,7 +69,7 @@ export default class Swap {
         outputNetwork: string,
         outputAddress: string,
         refundAddress = sender,
-        status = ACTIVE
+        status = STATUS.ACTIVE
     ) {
         this.network = network;
         this.transactionHash = transactionHash;
@@ -86,9 +87,3 @@ export default class Swap {
         this.status = status;
     }
 }
-
-const INVALID = 0; // Uninitialized  swap -> can go to ACTIVE
-const ACTIVE = 1; // Active swap -> can go to WITHDRAWN or EXPIRED
-const REFUNDED = 2; // Swap is refunded -> final state.
-const WITHDRAWN = 3; // Swap is withdrawn -> final state.
-const EXPIRED = 4; // Swap is expired -> can go to REFUNDED

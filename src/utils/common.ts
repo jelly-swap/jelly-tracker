@@ -40,8 +40,11 @@ export const matchSwapsBySender = (swaps: any[], sender: string | string[]) => {
                         const found = sender.some((s) => {
                             return compareAddress(swap.sender, s);
                         });
+
                         if (found) {
                             result.push({ ...swap, outputSwap });
+                        } else {
+                            result.push({ ...outputSwap, outputSwap: swap });
                         }
                     } else {
                         if (compareAddress(swap.sender, sender)) {

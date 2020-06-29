@@ -3,7 +3,7 @@ import Swap from './entity';
 import Refund from '../refund/entity';
 import Withdraw from '../withdraw/entity';
 import { matchSwaps, matchSwapsBySender } from '../../utils/common';
-import e from 'express';
+import { STATUS } from './constants';
 
 export default class SwapService {
     private swapRepository = new SwapRepository();
@@ -47,17 +47,17 @@ export default class SwapService {
 
     async onRefund(refund: Refund | Refund[]) {
         if (refund instanceof Array) {
-            return await this.swapRepository.updateMany(refund, 2);
+            return await this.swapRepository.updateMany(refund, STATUS.REFUNDED);
         } else {
-            return await this.swapRepository.updateOne(refund.id, 2, refund.transactionHash);
+            return await this.swapRepository.updateOne(refund.id, STATUS.REFUNDED, refund.transactionHash);
         }
     }
 
     async onWithdraw(withdraw: Withdraw | Withdraw[]) {
         if (withdraw instanceof Array) {
-            return await this.swapRepository.updateMany(withdraw, 3);
+            return await this.swapRepository.updateMany(withdraw, STATUS.WITHDRAWN);
         } else {
-            return await this.swapRepository.updateOne(withdraw.id, 3, withdraw.transactionHash);
+            return await this.swapRepository.updateOne(withdraw.id, STATUS.WITHDRAWN, withdraw.transactionHash);
         }
     }
 }

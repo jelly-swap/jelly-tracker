@@ -87,12 +87,22 @@ export default class SwapRepository {
     async updateMany(data: any[], status: number) {
         try {
             const query = data.reduce((p: ObjectLiteral[], c) => {
-                p.push({
-                    updateOne: {
-                        filter: { id: c.id },
-                        update: { $set: { status, completenessTransactionHash: c.transactionHash } },
-                    },
-                });
+                if (c.transactionHash) {
+                    p.push({
+                        updateOne: {
+                            filter: { id: c.id },
+                            update: { $set: { status, completenessTransactionHash: c.transactionHash } },
+                        },
+                    });
+                } else {
+                    p.push({
+                        updateOne: {
+                            filter: { id: c.id },
+                            update: { $set: { status } },
+                        },
+                    });
+                }
+
                 return p;
             }, [] as any);
 
