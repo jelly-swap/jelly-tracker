@@ -2,7 +2,6 @@ import SwapRepository from './repository';
 import Swap from './entity';
 import Refund from '../refund/entity';
 import Withdraw from '../withdraw/entity';
-import { matchSwaps, matchSwapsBySender } from '../../utils/common';
 import { STATUS } from './constants';
 
 export default class SwapService {
@@ -10,12 +9,12 @@ export default class SwapService {
 
     async getAll() {
         const result = await this.swapRepository.getAll();
-        return matchSwaps(result);
+        return result;
     }
 
     async getByAddress(address: string) {
         const result = await this.swapRepository.getByAddress(address.toLowerCase());
-        return matchSwapsBySender(result, address);
+        return result;
     }
 
     async getByAddressAfter(address: string, timestamp: string) {
@@ -24,21 +23,21 @@ export default class SwapService {
 
         if (isMoreThanOneAddress) {
             const result = await this.swapRepository.getByAddressesAfter(addresses, timestamp);
-            return matchSwapsBySender(result, addresses);
+            return result;
         } else {
             const result = await this.swapRepository.getByAddressAfter(addresses[0], timestamp);
-            return matchSwapsBySender(result, addresses[0]);
+            return result;
         }
     }
 
     async getByStatus(status: number) {
         const result = await this.swapRepository.getByStatus(status);
-        return matchSwaps(result);
+        return result;
     }
 
     async getByAddressAndStatus(address: string, status: number) {
         const result = await this.swapRepository.getByAddressAndStatus(address.toLowerCase(), status);
-        return matchSwaps(result);
+        return result;
     }
 
     async create(swap: Swap | Swap[]) {

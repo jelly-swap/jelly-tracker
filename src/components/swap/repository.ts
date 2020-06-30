@@ -1,7 +1,5 @@
 import {
-    getMongoRepository,
     MongoRepository,
-    UpdateEvent,
     ObjectLiteral,
     ReplaceOneOptions,
     UpdateWriteOpResult,
@@ -12,6 +10,7 @@ import {
 import Swap from './entity';
 
 import Log from '../../logger';
+import { cmpIgnoreCase } from '../../utils/common';
 
 export default class SwapRepository {
     private swapRepository = getCustomRepository(CustomSwapRepository);
@@ -21,45 +20,68 @@ export default class SwapRepository {
     }
 
     async getByAddress(address: string) {
-        return await this.swapRepository.find({
+        const swaps = await this.swapRepository.find({
             where: {
-                $or: [{ receiver: address }, { sender: address }],
+                $or: [{ receiver: address }, { sender: address }, { outputAddress: address }],
             },
         });
+
+        const inputSwaps = swaps.filter((swap) => cmpIgnoreCase(swap.sender, address));
+        const outputSwaps = swaps.filter((swap) => !cmpIgnoreCase(swap.sender, address));
+        return this.getInputSwaps(inputSwaps, outputSwaps);
     }
 
     async getByAddressAfter(address: string, timestamp: string) {
-        return await this.swapRepository.find({
+        const swaps = await this.swapRepository.find({
             where: {
                 $and: [
-                    { $or: [{ receiver: address }, { sender: address }] },
+                    { $or: [{ sender: address }, { receiver: address }, { outputAddress: address }] },
                     { expiration: { $gte: Number(timestamp) } },
                 ],
             },
         });
+
+        const inputSwaps = swaps.filter((swap) => cmpIgnoreCase(swap.sender, address));
+        const outputSwaps = swaps.filter((swap) => !cmpIgnoreCase(swap.sender, address));
+        return this.getInputSwaps(inputSwaps, outputSwaps);
     }
 
     async getByAddressesAfter(addresses: string[], timestamp: string) {
-        return await this.swapRepository.find({
+        const swaps = await this.swapRepository.find({
             where: {
                 $and: [
-                    { $or: [{ receiver: { $in: addresses } }, { sender: { $in: addresses } }] },
+                    {
+                        $or: [
+                            { receiver: { $in: addresses } },
+                            { sender: { $in: addresses } },
+                            { outputAddress: { $in: addresses } },
+                        ],
+                    },
                     { expiration: { $gte: Number(timestamp) } },
                 ],
             },
         });
+
+        const inputSwaps = swaps.filter((swap) => addresses.some((s) => cmpIgnoreCase(swap.sender, s)));
+        const outputSwaps = swaps.filter((swap) => !addresses.some((s) => cmpIgnoreCase(swap.sender, s)));
+        return this.getInputSwaps(inputSwaps, outputSwaps);
     }
 
     async getByStatus(status: number) {
-        return await this.swapRepository.find({ status });
+        const swaps = await this.swapRepository.find({ status });
+        return this.getInputSwaps(swaps, swaps);
     }
 
     async getByAddressAndStatus(address: string, status: number) {
-        return await this.swapRepository.find({
+        const swaps = await this.swapRepository.find({
             where: {
                 $and: [{ $or: [{ receiver: address }, { sender: address }] }, { status }],
             },
         });
+
+        const inputSwaps = swaps.filter((swap) => cmpIgnoreCase(swap.sender, address));
+        const outputSwaps = swaps.filter((swap) => !cmpIgnoreCase(swap.sender, address));
+        return this.getInputSwaps(inputSwaps, outputSwaps);
     }
 
     async create(swap: Swap | Swap[]) {
@@ -124,6 +146,24 @@ export default class SwapRepository {
         } catch (error) {
             Log.error(`Error while updating the swap: ${error}`);
         }
+    }
+
+    getInputSwaps(inputSwaps: Swap[], outputSwaps: Swap[]) {
+        return inputSwaps.reduce((result, swap) => {
+            const outputSwap = outputSwaps.find(
+                (outputSwap) =>
+                    cmpIgnoreCase(outputSwap.hashLock, swap.hashLock) &&
+                    cmpIgnoreCase(outputSwap.network, swap.outputNetwork)
+            );
+
+            if (outputSwap) {
+                result.push({ ...swap, outputSwap });
+            } else {
+                result.push(swap);
+            }
+
+            return result;
+        }, [] as any);
     }
 }
 
