@@ -17,7 +17,7 @@ export default class EthereumEvent {
     private emitter: Emitter;
 
     constructor() {
-        this.provider = new providers.InfuraProvider('homestead', Config.infuraKey);
+        this.provider = new providers.InfuraProvider(Config.chain, Config.infuraKey);
         this.contract = new Contract(Config.contractAddress, Config.abi, this.provider);
         this.emitter = Emitter.Instance;
     }

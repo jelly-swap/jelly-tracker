@@ -1,5 +1,7 @@
+import Env from '../../env';
+
 export default {
-    apiUrl: 'https://spacejelly.network/btc/api/v1/btc/',
+    apiUrl: Env.blockchain.btc.provider,
     pollingInterval: 45000, // 45 sec
     syncBlocksMargin: 6,
 };

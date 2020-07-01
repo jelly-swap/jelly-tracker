@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 import * as path from 'path';
 
-import { getOsEnv, getOsEnvOptional, normalizePort, toBool } from './utils/env';
+import { getOsEnv, getOsEnvOptional, getOsEnvArray, normalizePort, toBool, toNumber } from './utils/env';
 
 /**
  * Load .env file or for tests the .env.test file.
@@ -29,5 +29,34 @@ export default {
         synchronize: toBool(getOsEnvOptional('TYPEORM_SYNCHRONIZE')),
         logging: getOsEnv('TYPEORM_LOGGING'),
         authSource: getOsEnv('TYPEORM_AUTH_SOURCE'),
+    },
+
+    blockchain: {
+        networks: getOsEnvArray('NETWORKS'),
+
+        eth: {
+            provider: getOsEnv('ETH_PROVIDER'),
+            contract: getOsEnv('ETH_CONTRACT'),
+            originBlock: toNumber(getOsEnv('ETH_ORIGIN_BLOCK')),
+            chain: getOsEnv('ETH_CHAIN'),
+        },
+
+        erc20: {
+            provider: getOsEnv('ERC20_PROVIDER'),
+            contract: getOsEnv('ERC20_CONTRACT'),
+            originBlock: toNumber(getOsEnv('ERC20_ORIGIN_BLOCK')),
+            chain: getOsEnv('ERC20_CHAIN'),
+        },
+
+        btc: {
+            provider: getOsEnv('BTC_PROVIDER'),
+        },
+
+        ae: {
+            api: getOsEnv('AE_API'),
+            ws: getOsEnv('AE_WS'),
+            provider: getOsEnv('AE_PROVIDER'),
+            contract: getOsEnv('AE_CONTRACT'),
+        },
     },
 };

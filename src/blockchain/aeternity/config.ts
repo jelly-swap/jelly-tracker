@@ -1,12 +1,13 @@
+import Env from '../../env';
 import contractSource from './countractSource';
 
 export default {
-    contractAddress: 'ct_jmRkfpzmn7KZbXbkEL9wueJkb1vaFzMnVFJMFjAnJgj1CTtQe',
+    contractAddress: Env.blockchain.ae.contract,
     syncBlocksMargin: 50,
-    apiUrl: 'https://mainnet.aeternal.io/',
-    wsUrl: 'wss://mainnet.aeternal.io/websocket',
-    providerUrl: 'https://sdk-mainnet.aepps.com/',
-    internalUrl: 'https://sdk-mainnet.aepps.com/',
+    apiUrl: Env.blockchain.ae.api,
+    wsUrl: Env.blockchain.ae.ws,
+    providerUrl: Env.blockchain.ae.provider,
+    internalUrl: Env.blockchain.ae.provider,
     compilerUrl: 'https://compiler.aepps.com',
     contractSource,
 };

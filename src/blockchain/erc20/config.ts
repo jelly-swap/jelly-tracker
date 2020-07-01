@@ -1,9 +1,12 @@
+import Env from '../../env';
+
 import abi from './abi';
 
 export default {
-    contractAddress: '0x133DbFdf74f565838A2f9413Fb53761a19f06ADF',
-    originBlock: 9792117,
+    contractAddress: Env.blockchain.erc20.contract,
+    originBlock: Env.blockchain.erc20.originBlock,
+    infuraKey: Env.blockchain.erc20.provider,
+    chain: Env.blockchain.erc20.chain,
     syncBlocksMargin: 12,
-    infuraKey: 'ee13a282868d4e7cb7d9a9543958631d',
     abi,
 };

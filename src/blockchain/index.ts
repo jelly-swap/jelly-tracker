@@ -6,17 +6,30 @@ import BitcoinEvent from './bitcoin';
 import BlockService from '../components/block/service';
 
 import Log from '../logger';
+import Env from '../env';
 
 const SYNC_PERIOD = 300000; // 5 minutes
 
+const Networks = {
+    ETH: EthereumEvent,
+    ERC20: Erc20Event,
+    BTC: BitcoinEvent,
+    AE: AeternityEvent,
+};
+
 export default async () => {
     const blockService = new BlockService();
-    const ETH = new EthereumEvent();
-    const ERC20 = new Erc20Event(ETH.provider);
-    const BTC = new BitcoinEvent();
-    const AE = new AeternityEvent();
+    const networks = Env.blockchain.networks;
 
-    const events = { ETH, ERC20, BTC, AE };
+    const events = networks.reduce((result, n) => {
+        if (n === 'ERC20' && result['ETH']) {
+            result[n] = new Networks[n](result['ETH'].provider);
+        }
+
+        result[n] = new Networks[n]();
+
+        return result;
+    }, {} as any);
 
     await sync(events, blockService);
 
