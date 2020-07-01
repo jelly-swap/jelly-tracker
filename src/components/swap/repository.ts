@@ -1,19 +1,13 @@
-import {
-    MongoRepository,
-    ObjectLiteral,
-    ReplaceOneOptions,
-    UpdateWriteOpResult,
-    getCustomRepository,
-    EntityRepository,
-} from 'typeorm';
+import { ObjectLiteral, getMongoRepository } from 'typeorm';
 
 import Swap from './entity';
 
 import Log from '../../logger';
 import { cmpIgnoreCase } from '../../utils/common';
+import Emitter from '../../websocket/emitter';
 
 export default class SwapRepository {
-    private swapRepository = getCustomRepository(CustomSwapRepository);
+    private swapRepository = getMongoRepository(Swap);
 
     async getAll() {
         return await this.swapRepository.find();
@@ -97,7 +91,9 @@ export default class SwapRepository {
             }
         } else {
             try {
-                return await this.swapRepository.save(swap);
+                const result = await this.swapRepository.save(swap);
+                Emitter.Instance.emit('WS_MESSAGE', { topic: 'Swap', data: swap });
+                return result;
             } catch (error) {
                 if (error?.code !== 11000) {
                     Log.error(`Error while bulk saving swaps: ${error}`);
@@ -142,6 +138,12 @@ export default class SwapRepository {
                 { id },
                 { $set: { status, completenessTransactionHash: txHash } }
             );
+
+            Emitter.Instance.emit('WS_MESSAGE', {
+                topic: 'Update',
+                data: { id, status, completenessTransactionHash: txHash },
+            });
+
             return result;
         } catch (error) {
             Log.error(`Error while updating the swap: ${error}`);
@@ -164,24 +166,5 @@ export default class SwapRepository {
 
             return result;
         }, [] as any);
-    }
-}
-
-@EntityRepository(Swap)
-export class CustomSwapRepository extends MongoRepository<Swap> {
-    async updateOne(
-        query: ObjectLiteral,
-        update: ObjectLiteral,
-        options?: ReplaceOneOptions
-    ): Promise<UpdateWriteOpResult> {
-        const result = await super.updateOne(query, update, options);
-
-        if (result.modifiedCount > 0) {
-            this.manager.connection.subscribers.forEach((subscriber) =>
-                subscriber.afterUpdate({ ...update['$set'], ...query } as any)
-            );
-        }
-
-        return result;
     }
 }

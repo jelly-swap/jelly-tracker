@@ -6,7 +6,7 @@ import Swap from './entity';
 
 const ADDITIONAL_TIME = { BTC: 3600 };
 const TIMESTAMP_DIVISOR = { AE: 1000 };
-const PERIOD = 5 * 60 * 1000; // 5 minutes
+const PERIOD = 1 * 60 * 1000; // 5 minutes
 
 export class StatusTracker {
     public name: string;
@@ -38,11 +38,17 @@ export class StatusTracker {
         await this.swapRepository.updateMany(expiredSwaps, STATUS.EXPIRED);
 
         expiredSwaps.forEach((swap) => {
-            Emitter.Instance.emit('WS_MESSAGE', { topic: 'Expired', data: { id: swap.id, status: STATUS.EXPIRED } });
+            const { id, sender, receiver, network, outputNetwork } = swap;
+            Emitter.Instance.emit('WS_MESSAGE', {
+                topic: 'Expired',
+                data: { id, sender, receiver, network, outputNetwork, status: STATUS.EXPIRED },
+            });
         });
     }
 
     async start() {
+        await this.trackStatus();
+
         setInterval(async () => {
             await this.trackStatus();
         }, PERIOD);
