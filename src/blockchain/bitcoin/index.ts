@@ -37,7 +37,7 @@ export default class BitcoinEvent {
                 });
 
                 withdraws.forEach((w: Withdraw) => {
-                    this.emitter.emit('WITHDRAWS', withdraws);
+                    this.emitter.emit('WITHDRAWS', w);
                 });
 
                 refunds.forEach((r: Refund) => {
