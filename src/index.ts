@@ -40,6 +40,8 @@ createConnection(dbConfig as any)
             Log.info(`Server started on port ${Env.app.port}.`);
         });
 
+        router.get('/', (req, res) => res.send('Up.'));
+
         SwapHandler();
         WithdrawHandler();
         RefundHandler();
