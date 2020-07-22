@@ -7,4 +7,8 @@ export default class WithdrawService {
     async create(withdraw: Withdraw | Withdraw[]) {
         return await this.withdrawRepository.create(withdraw);
     }
+
+    async get() {
+        return await this.withdrawRepository.get();
+    }
 }

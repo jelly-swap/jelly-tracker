@@ -7,4 +7,10 @@ export default [
         controller: WithdrawController,
         action: '',
     },
+    {
+        method: 'get',
+        route: '/withdraws',
+        controller: WithdrawController,
+        action: 'getAll',
+    },
 ];

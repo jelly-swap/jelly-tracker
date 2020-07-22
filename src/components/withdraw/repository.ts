@@ -28,4 +28,12 @@ export default class WithdrawRepository {
             }
         }
     }
+
+    public async get() {
+        try {
+            return await this.withdrawRepository.find();
+        } catch (error) {
+            Log.error(`Error getting all withdraws: ${error}`);
+        }
+    }
 }
