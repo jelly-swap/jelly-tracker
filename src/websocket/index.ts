@@ -49,6 +49,6 @@ export default class WebSocketServer {
                 extWs.isAlive = false;
                 ws.ping(null, undefined);
             });
-        }, 60000);
+        }, 45000);
     }
 }
