@@ -16,6 +16,6 @@ jobs:
         git config user.email github-actions@github.com
         git remote add heroku https://git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
         git add . 
-        git commit -m ${{ github.sha }}
+        git commit -m "${{ github.sha }}"
         git push -f heroku master
         
