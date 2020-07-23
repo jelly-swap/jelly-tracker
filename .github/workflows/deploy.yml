@@ -13,10 +13,12 @@ jobs:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: 
         git remote add heroku https://git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
-    - name: Push to master.
-      env: 
-        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+    - name: Add changes
       run:
-        git add .
+        git add . 
+    - name: Commit changes
+      run: 
         git commit -m ${{ github.sha }}
+    - name: Push changes
+      run:
         git push -f heroku master
