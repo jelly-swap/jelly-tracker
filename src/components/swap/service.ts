@@ -30,6 +30,19 @@ export default class SwapService {
         }
     }
 
+    async getByReceiverAfter(address: string, timestamp: string) {
+        const addresses = address.split(';').map((a) => a.toLowerCase());
+        const isMoreThanOneAddress = addresses.length > 1;
+
+        if (isMoreThanOneAddress) {
+            const result = await this.swapRepository.getByReceiversAfter(addresses, timestamp);
+            return result;
+        } else {
+            const result = await this.swapRepository.getByReceiverAfter(addresses[0], timestamp);
+            return result;
+        }
+    }
+
     async getByStatus(status: number) {
         const result = await this.swapRepository.getByStatus(status);
         return result;

@@ -24,6 +24,13 @@ export default [
 
     {
         method: 'get',
+        route: '/api/v1/swaps/receiver/:address/expiration/:expiration',
+        controller: SwapController,
+        action: 'getByReceiverAfter',
+    },
+
+    {
+        method: 'get',
         route: '/api/v1/swaps/status/:status',
         controller: SwapController,
         action: 'getByStatus',
