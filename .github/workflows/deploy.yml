@@ -13,12 +13,11 @@ jobs:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: 
         git remote add heroku https://git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
-    - name: Add changes
-      run:
+    - name: Push changes to Heroku
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
         git add . 
-    - name: Commit changes
-      run: 
         git commit -m ${{ github.sha }}
-    - name: Push changes
-      run:
         git push -f heroku master
+        
