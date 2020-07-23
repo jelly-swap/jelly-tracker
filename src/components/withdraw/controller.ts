@@ -8,8 +8,8 @@ export default class WithdrawController {
         this.withdrawService = new WithdrawService();
     }
 
-    getByAddressAfter(request: Request, response: Response, next: NextFunction) {
+    getBySenderAfter(request: Request, response: Response, next: NextFunction) {
         const { address, expiration } = request.params;
-        return this.withdrawService.getByAddressAfter(address, expiration);
+        return this.withdrawService.getBySenderAfter(address, expiration);
     }
 }
