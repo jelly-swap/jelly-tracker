@@ -61,6 +61,24 @@ export default class SwapRepository {
         return this.getInputSwaps(inputSwaps, outputSwaps);
     }
 
+    async getByReceiverAfter(receiver: string, timestamp: string) {
+        const swaps = await this.swapRepository.find({
+            where: {
+                $and: [{ receiver }, { expiration: { $gte: Number(timestamp) } }],
+            },
+        });
+        return swaps;
+    }
+
+    async getByReceiversAfter(receivers: string[], timestamp: string) {
+        const swaps = await this.swapRepository.find({
+            where: {
+                $and: [{ receiver: { $in: receivers } }, { expiration: { $gte: Number(timestamp) } }],
+            },
+        });
+        return swaps;
+    }
+
     async getByStatus(status: number) {
         const swaps = await this.swapRepository.find({ status });
         return this.getInputSwaps(swaps, swaps);

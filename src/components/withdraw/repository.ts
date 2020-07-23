@@ -32,4 +32,28 @@ export default class WithdrawRepository {
             }
         }
     }
+
+    async getBySenderAfter(sender: string, timestamp: string) {
+        const date = new Date(Number(timestamp) * 1000); // should be in ms
+
+        const withdraws = await this.withdrawRepository.find({
+            where: {
+                $and: [{ sender }, { createdAt: { $gte: date } }],
+            },
+        });
+
+        return withdraws;
+    }
+
+    async getBySendersAfter(senders: string[], timestamp: string) {
+        const date = new Date(Number(timestamp) * 1000); // should be in ms
+
+        const withdraws = await this.withdrawRepository.find({
+            where: {
+                $and: [{ sender: { $in: senders } }, { createdAt: { $gte: date } }],
+            },
+        });
+
+        return withdraws;
+    }
 }
