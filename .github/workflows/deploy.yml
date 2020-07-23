@@ -17,4 +17,6 @@ jobs:
       env: 
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run:
+        git add .
+        git commit -m ${{ github.sha }}
         git push -f heroku master
