@@ -29,11 +29,23 @@ export default class WithdrawRepository {
         }
     }
 
-    public async get() {
-        try {
-            return await this.withdrawRepository.find();
-        } catch (error) {
-            Log.error(`Error getting all withdraws: ${error}`);
-        }
+    async getByAddressAfter(address: string, timestamp: string) {
+        const withdraws = await this.withdrawRepository.find({
+            where: {
+                $and: [{ sender: address }, { expiration: { $gte: Number(timestamp) } }],
+            },
+        });
+
+        return withdraws;
+    }
+
+    async getByAddressesAfter(addresses: string[], timestamp: string) {
+        const withdraws = await this.withdrawRepository.find({
+            where: {
+                $and: [{ sender: { $in: addresses } }, { expiration: { $gte: Number(timestamp) } }],
+            },
+        });
+
+        return withdraws;
     }
 }

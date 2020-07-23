@@ -8,7 +8,16 @@ export default class WithdrawService {
         return await this.withdrawRepository.create(withdraw);
     }
 
-    async get() {
-        return await this.withdrawRepository.get();
+    async getByAddressAfter(address: string, timestamp: string) {
+        const addresses = address.split(';').map((a) => a.toLowerCase());
+        const isMoreThanOneAddress = addresses.length > 1;
+
+        if (isMoreThanOneAddress) {
+            const result = await this.withdrawRepository.getByAddressesAfter(addresses, timestamp);
+            return result;
+        } else {
+            const result = await this.withdrawRepository.getByAddressAfter(addresses[0], timestamp);
+            return result;
+        }
     }
 }
