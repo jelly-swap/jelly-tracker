@@ -30,9 +30,11 @@ export default class WithdrawRepository {
     }
 
     async getByAddressAfter(address: string, timestamp: string) {
+        const date = new Date(Number(timestamp) * 1000); // should be in ms
+
         const withdraws = await this.withdrawRepository.find({
             where: {
-                $and: [{ sender: address }, { expiration: { $gte: Number(timestamp) } }],
+                $and: [{ sender: address }, { createdAt: { $gte: date } }],
             },
         });
 
@@ -40,9 +42,11 @@ export default class WithdrawRepository {
     }
 
     async getByAddressesAfter(addresses: string[], timestamp: string) {
+        const date = new Date(Number(timestamp) * 1000); // should be in ms
+
         const withdraws = await this.withdrawRepository.find({
             where: {
-                $and: [{ sender: { $in: addresses } }, { expiration: { $gte: Number(timestamp) } }],
+                $and: [{ sender: { $in: addresses } }, { createdAt: { $gte: date } }],
             },
         });
 
