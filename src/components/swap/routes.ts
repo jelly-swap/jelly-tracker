@@ -42,4 +42,11 @@ export default [
         controller: SwapController,
         action: 'getByAddressAndStatus',
     },
+
+    {
+        method: 'get',
+        route: '/api/v1/swaps/sender/:address/status/:status',
+        controller: SwapController,
+        action: 'getBySenderAndStatus',
+    },
 ];

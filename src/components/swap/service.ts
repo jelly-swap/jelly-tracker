@@ -53,6 +53,19 @@ export default class SwapService {
         return result;
     }
 
+    async getBySenderAndStatus(address: string, status: number) {
+        const addresses = address.split(';').map((a) => a.toLowerCase());
+        const isMoreThanOneAddress = addresses.length > 1;
+
+        if (isMoreThanOneAddress) {
+            const result = await this.swapRepository.getBySendersAndStatus(addresses, status);
+            return result;
+        } else {
+            const result = await this.swapRepository.getBySenderAndStatus(addresses[0], status);
+            return result;
+        }
+    }
+
     async create(swap: Swap | Swap[]) {
         return await this.swapRepository.create(swap);
     }

@@ -37,4 +37,9 @@ export default class SwapController {
         const { address, status } = request.params;
         return this.swapService.getByAddressAndStatus(address, Number(status));
     }
+
+    getBySenderAndStatus(request: Request, response: Response, next: NextFunction) {
+        const { address, status } = request.params;
+        return this.swapService.getBySenderAndStatus(address, Number(status));
+    }
 }

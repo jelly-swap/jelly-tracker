@@ -79,6 +79,20 @@ export default class SwapRepository {
         return swaps;
     }
 
+    async getBySenderAndStatus(sender: string, status: number) {
+        const swaps = await this.swapRepository.find({ sender, status });
+        return swaps;
+    }
+
+    async getBySendersAndStatus(senders: string[], status: number) {
+        const swaps = await this.swapRepository.find({
+            where: {
+                $and: [{ sender: { $in: senders } }, { status }],
+            },
+        });
+        return swaps;
+    }
+
     async getByStatus(status: number) {
         const swaps = await this.swapRepository.find({ status });
         return this.getInputSwaps(swaps, swaps);
