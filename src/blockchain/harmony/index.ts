@@ -25,7 +25,7 @@ export default class EthereumEvent {
 
     constructor() {
         this.wallet = new Wallet(
-            new Messenger(new WSProvider('wss://ws.s1.b.hmny.io'), ChainType.Harmony, Config.chain)
+            new Messenger(new WSProvider('wss://ws.s0.b.hmny.io'), ChainType.Harmony, Config.chain)
         );
         const factory = new ContractFactory(this.wallet);
 
@@ -37,13 +37,20 @@ export default class EthereumEvent {
     }
 
     async getBlock() {
-        return await this.blockchain.getBlockNumber();
+        const blockNumber = await this.blockchain.getBlockNumber();
+        if (blockNumber.result) {
+            return blockNumber.result;
+        }
+
+        return 0;
     }
 
     subscribe() {
         this.contract.events
             .NewContract()
             .on('data', (event) => {
+                console.log('NewContract', event);
+
                 const baseTx = {
                     network: 'ONE',
                     transactionHash: event.transactionHash,
@@ -74,6 +81,8 @@ export default class EthereumEvent {
         this.contract.events
             .Withdraw()
             .on('data', (event) => {
+                console.log('Withdraw', event);
+
                 const baseTx = {
                     network: 'ONE',
                     transactionHash: event.transactionHash,
@@ -100,6 +109,8 @@ export default class EthereumEvent {
         this.contract.events
             .Refund()
             .on('data', (event) => {
+                console.log('Refund', event);
+
                 const baseTx = {
                     network: 'ONE',
                     transactionHash: event.transactionHash,
