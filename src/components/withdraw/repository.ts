@@ -1,3 +1,4 @@
+import { ObjectID } from 'mongodb';
 import { getMongoRepository } from 'typeorm';
 
 import Withdraw from './entity';
@@ -34,11 +35,11 @@ export default class WithdrawRepository {
     }
 
     async getBySenderAfter(sender: string, timestamp: string) {
-        const date = new Date(Number(timestamp) * 1000); // should be in ms
+        const objectId = new ObjectID(Number(timestamp));
 
         const withdraws = await this.withdrawRepository.find({
             where: {
-                $and: [{ sender }, { createdAt: { $gte: date } }],
+                $and: [{ sender }, { _id: { $gte: objectId } }],
             },
         });
 
@@ -46,11 +47,11 @@ export default class WithdrawRepository {
     }
 
     async getBySendersAfter(senders: string[], timestamp: string) {
-        const date = new Date(Number(timestamp) * 1000); // should be in ms
+        const objectId = new ObjectID(Number(timestamp));
 
         const withdraws = await this.withdrawRepository.find({
             where: {
-                $and: [{ sender: { $in: senders } }, { createdAt: { $gte: date } }],
+                $and: [{ sender: { $in: senders } }, { _id: { $gte: objectId } }],
             },
         });
 
