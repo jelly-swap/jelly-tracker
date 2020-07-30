@@ -58,5 +58,12 @@ export default {
             provider: getOsEnv('AE_PROVIDER'),
             contract: getOsEnv('AE_CONTRACT'),
         },
+
+        ava: {
+            provider: getOsEnv('AVA_PROVIDER'),
+            contract: getOsEnv('AVA_CONTRACT'),
+            originBlock: toNumber(getOsEnv('AVA_ORIGIN_BLOCK')),
+            chain: getOsEnv('AVA_CHAIN'),
+        },
     },
 };
