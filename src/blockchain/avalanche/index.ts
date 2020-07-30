@@ -116,7 +116,7 @@ export default class AvalancheEvent {
 
         result.forEach((log) => {
             const baseTx = {
-                network: 'ETH',
+                network: 'AVA',
                 transactionHash: log.transactionHash,
                 blockNumber: log.blockNumber,
             };
