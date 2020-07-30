@@ -116,7 +116,6 @@ export default class Erc20Event {
 
         result.forEach((log) => {
             const baseTx = {
-                network: 'ETH',
                 transactionHash: log.transactionHash,
                 blockNumber: log.blockNumber,
             };
