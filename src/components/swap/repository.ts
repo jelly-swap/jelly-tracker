@@ -2,6 +2,8 @@ import { ObjectLiteral, getMongoRepository } from 'typeorm';
 
 import Swap from './entity';
 
+import { STATUS } from './constants';
+
 import Log from '../../logger';
 import { cmpIgnoreCase } from '../../utils/common';
 import Emitter from '../../websocket/emitter';
@@ -141,7 +143,10 @@ export default class SwapRepository {
                     p.push({
                         updateOne: {
                             filter: { id: c.id },
-                            update: { $set: { status, completenessTransactionHash: c.transactionHash } },
+                            update:
+                                status === STATUS.EXPIRED
+                                    ? { $set: { status } }
+                                    : { $set: { status, completenessTransactionHash: c.transactionHash } },
                         },
                     });
                 } else {
