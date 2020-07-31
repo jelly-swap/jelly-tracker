@@ -42,6 +42,7 @@ export default class AvalancheEvent {
                 switch (log.event) {
                     case 'NewContract': {
                         const swap = { ...baseTx, ...getSwap(log.args) };
+
                         this.emitter.emit(
                             'SWAPS',
                             new Swap(
@@ -116,7 +117,7 @@ export default class AvalancheEvent {
 
         result.forEach((log) => {
             const baseTx = {
-                network: 'ETH',
+                network: 'AVA',
                 transactionHash: log.transactionHash,
                 blockNumber: log.blockNumber,
             };
