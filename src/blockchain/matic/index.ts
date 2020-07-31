@@ -10,7 +10,7 @@ import Refund from '../../components/refund/entity';
 
 import Emitter from '../../websocket/emitter';
 
-export default class AvalancheEvent {
+export default class MaticEvent {
     public readonly syncBlocksMargin = Config.syncBlocksMargin;
     public provider: providers.BaseProvider;
     private contract: Contract;
@@ -33,7 +33,7 @@ export default class AvalancheEvent {
             },
             (log) => {
                 const baseTx = {
-                    network: 'AVA',
+                    network: 'MATIC',
                     transactionHash: log.transactionHash,
                     blockNumber: log.blockNumber,
                 };
@@ -41,6 +41,7 @@ export default class AvalancheEvent {
                 switch (log.event) {
                     case 'NewContract': {
                         const swap = { ...baseTx, ...getSwap(log.args) };
+
                         this.emitter.emit(
                             'SWAPS',
                             new Swap(
@@ -115,7 +116,7 @@ export default class AvalancheEvent {
 
         result.forEach((log) => {
             const baseTx = {
-                network: 'AVA',
+                network: 'MATIC',
                 transactionHash: log.transactionHash,
                 blockNumber: log.blockNumber,
             };

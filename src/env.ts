@@ -65,5 +65,12 @@ export default {
             originBlock: toNumber(getOsEnv('AVA_ORIGIN_BLOCK')),
             chain: getOsEnv('AVA_CHAIN'),
         },
+
+        matic: {
+            provider: getOsEnv('MATIC_PROVIDER'),
+            contract: getOsEnv('MATIC_CONTRACT'),
+            originBlock: toNumber(getOsEnv('MATIC_ORIGIN_BLOCK')),
+            chain: getOsEnv('MATIC_CHAIN'),
+        },
     },
 };
