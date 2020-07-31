@@ -18,7 +18,7 @@ export default class AvalancheEvent {
     private emitter: Emitter;
 
     constructor() {
-        this.provider = new providers.JsonRpcProvider(env.blockchain.ava.provider);
+        this.provider = new providers.JsonRpcProvider(Config.provider);
         this.contract = new Contract(Config.contractAddress, Config.abi, this.provider);
         this.emitter = Emitter.Instance;
     }
