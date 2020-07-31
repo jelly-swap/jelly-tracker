@@ -9,7 +9,6 @@ import Withdraw from '../../components/withdraw/entity';
 import Refund from '../../components/refund/entity';
 
 import Emitter from '../../websocket/emitter';
-import env from '../../env';
 
 export default class AvalancheEvent {
     public readonly syncBlocksMargin = Config.syncBlocksMargin;
