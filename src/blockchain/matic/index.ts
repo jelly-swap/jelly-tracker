@@ -9,7 +9,6 @@ import Withdraw from '../../components/withdraw/entity';
 import Refund from '../../components/refund/entity';
 
 import Emitter from '../../websocket/emitter';
-import env from '../../env';
 
 export default class MaticEvent {
     public readonly syncBlocksMargin = Config.syncBlocksMargin;
@@ -18,7 +17,7 @@ export default class MaticEvent {
     private emitter: Emitter;
 
     constructor() {
-        this.provider = new providers.JsonRpcProvider(env.blockchain.matic.provider);
+        this.provider = new providers.JsonRpcProvider(Config.provider);
         this.contract = new Contract(Config.contractAddress, Config.abi, this.provider);
         this.emitter = Emitter.Instance;
     }
