@@ -1,4 +1,4 @@
-name: Deploy
+name: Deploy-Testnet
 
 on: 
   workflow_dispatch
