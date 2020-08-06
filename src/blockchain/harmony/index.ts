@@ -1,6 +1,7 @@
 import { ContractFactory, Contract } from '@harmony-js/contract';
 import { Blockchain } from '@harmony-js/core';
 import { Wallet } from '@harmony-js/account';
+import { toBech32 } from '@harmony-js/crypto';
 import { Messenger, WSProvider } from '@harmony-js/network';
 import { ChainType } from '@harmony-js/utils';
 
@@ -38,11 +39,7 @@ export default class EthereumEvent {
 
     async getBlock() {
         const blockNumber = await this.blockchain.getBlockNumber();
-        if (blockNumber.result) {
-            return blockNumber.result;
-        }
-
-        return 0;
+        return blockNumber.result || 0;
     }
 
     subscribe() {
@@ -58,6 +55,9 @@ export default class EthereumEvent {
                 };
                 const swap = { ...baseTx, ...getSwap(event.returnValues) };
 
+                const sender = toBech32(swap.sender);
+                const receiver = toBech32(swap.receiver);
+
                 this.emitter.emit(
                     'SWAPS',
                     new Swap(
@@ -69,8 +69,8 @@ export default class EthereumEvent {
                         Number(swap.expiration),
                         swap.id,
                         swap.hashLock,
-                        swap.sender,
-                        swap.receiver,
+                        sender,
+                        receiver,
                         swap.outputNetwork,
                         swap.outputAddress
                     )
@@ -90,6 +90,9 @@ export default class EthereumEvent {
                 };
                 const withdraw = { ...baseTx, ...getWithdraw(event.returnValues) };
 
+                const sender = toBech32(withdraw.sender);
+                const receiver = toBech32(withdraw.receiver);
+
                 this.emitter.emit(
                     'WITHDRAWS',
                     new Withdraw(
@@ -99,8 +102,8 @@ export default class EthereumEvent {
                         withdraw.id,
                         withdraw.secret,
                         withdraw.hashLock,
-                        withdraw.sender,
-                        withdraw.receiver
+                        sender,
+                        receiver
                     )
                 );
             })
@@ -118,6 +121,9 @@ export default class EthereumEvent {
                 };
                 const refund = { ...baseTx, ...getRefund(event.returnValues) };
 
+                const sender = toBech32(refund.sender);
+                const receiver = toBech32(refund.receiver);
+
                 this.emitter.emit(
                     'REFUNDS',
                     new Refund(
@@ -126,8 +132,8 @@ export default class EthereumEvent {
                         refund.blockNumber,
                         refund.id,
                         refund.hashLock,
-                        refund.sender,
-                        refund.receiver
+                        sender,
+                        receiver
                     )
                 );
             })
@@ -135,6 +141,24 @@ export default class EthereumEvent {
     }
 
     async getPast(fromBlock?: number) {
+        // console.log('tuka sam');
+        // console.log({
+        //     fromBlock: Config.originBlock,
+        //     toBlock: 'latest',
+        //     address: Config.contractAddress,
+        // });
+        // this.blockchain
+        //     .logs({
+        //         fromBlock: Config.originBlock,
+        //         // toBlock: 'latest',
+        //         address: Config.contractAddress,
+        //     })
+        //     .on('data', (event) => {
+        //         console.log(event);
+        //     })
+        //     .on('error', (err) => {
+        //         console.log(err);
+        //     });
         //TODO: implement get past service. Wait for Harmony dev team's input.
         // await this.emitter.emitAsync('SWAPS', swaps);
         // await this.emitter.emitAsync('WITHDRAWS', withdraws);
