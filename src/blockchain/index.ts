@@ -2,6 +2,7 @@ import EthereumEvent from './ethereum';
 import Erc20Event from './erc20';
 import AeternityEvent from './aeternity';
 import BitcoinEvent from './bitcoin';
+import HarmonyEvent from './harmony';
 import AvalancheEvent from './avalanche';
 import MaticEvent from './matic';
 
@@ -17,6 +18,7 @@ const Networks = {
     ERC20: Erc20Event,
     BTC: BitcoinEvent,
     AE: AeternityEvent,
+    ONE: HarmonyEvent,
     AVA: AvalancheEvent,
     MATIC: MaticEvent,
 };
@@ -55,7 +57,7 @@ const sync = async (events, blockService) => {
         const lastBlock = await network.getBlock();
         const lastSyncedBlock = await blockService.getBlockNumber(chain);
 
-        if (lastSyncedBlock) {
+        if (lastSyncedBlock && lastSyncedBlock > lastBlock) {
             Log.info(`Sync ${chain} at block ${lastSyncedBlock}`);
             await network.getPast(lastSyncedBlock - network.syncBlocksMargin);
             await blockService.update(chain, lastBlock);

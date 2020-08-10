@@ -59,6 +59,12 @@ export default {
             contract: getOsEnv('AE_CONTRACT'),
         },
 
+        harmony: {
+            ws: getOsEnv('HARMONY_WS'),
+            contract: getOsEnv('HARMONY_CONTRACT'),
+            originBlock: getOsEnv('HARMONY_ORIGIN_BLOCK'),
+            chain: toNumber(getOsEnv('HARMONY_CHAIN')),
+
         ava: {
             provider: getOsEnv('AVA_PROVIDER'),
             contract: getOsEnv('AVA_CONTRACT'),
