@@ -61,6 +61,7 @@ export default {
 
         harmony: {
             ws: getOsEnv('HARMONY_WS'),
+            httpProvider: getOsEnv('HARMONY_HTTP_RPOVIDER'),
             contract: getOsEnv('HARMONY_CONTRACT'),
             originBlock: getOsEnv('HARMONY_ORIGIN_BLOCK'),
             chain: toNumber(getOsEnv('HARMONY_CHAIN')),

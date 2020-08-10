@@ -26,16 +26,14 @@ export default class EthereumEvent {
     private emitter: Emitter;
 
     constructor() {
-        this.wallet = new Wallet(
-            new Messenger(new WSProvider('wss://ws.s0.b.hmny.io'), ChainType.Harmony, Config.chain)
-        );
+        this.wallet = new Wallet(new Messenger(new WSProvider(Config.ws), ChainType.Harmony, Config.chain));
         const factory = new ContractFactory(this.wallet);
 
         this.contract = factory.createContract(Config.abi, Config.contractAddress);
 
         this.blockchain = new Blockchain(this.wallet.messenger);
 
-        this.logsMessenger = new Messenger(new HttpProvider('https://api.s0.b.hmny.io'));
+        this.logsMessenger = new Messenger(new HttpProvider(Config.httpProvider));
 
         this.emitter = Emitter.Instance;
     }
