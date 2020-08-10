@@ -57,7 +57,7 @@ const sync = async (events, blockService) => {
         const lastBlock = await network.getBlock();
         const lastSyncedBlock = await blockService.getBlockNumber(chain);
 
-        if (lastSyncedBlock && lastSyncedBlock > lastBlock) {
+        if (lastSyncedBlock) {
             Log.info(`Sync ${chain} at block ${lastSyncedBlock}`);
             await network.getPast(lastSyncedBlock - network.syncBlocksMargin);
             await blockService.update(chain, lastBlock);
