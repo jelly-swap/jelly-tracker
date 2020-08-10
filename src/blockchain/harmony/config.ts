@@ -7,6 +7,6 @@ export default {
     originBlock: Env.blockchain.harmony.originBlock,
     ws: Env.blockchain.harmony.ws,
     chain: Env.blockchain.harmony.chain,
-    syncBlocksMargin: 12,
+    syncBlocksMargin: 250,
     abi,
 };
