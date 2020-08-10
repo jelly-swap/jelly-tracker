@@ -2,9 +2,9 @@ import WithdrawController from './controller';
 
 export default [
     {
-        method: 'post',
-        route: '/',
+        method: 'get',
+        route: '/api/v1/withdraws/sender/:address/expiration/:expiration',
         controller: WithdrawController,
-        action: '',
+        action: 'getBySenderAfter',
     },
 ];

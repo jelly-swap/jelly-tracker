@@ -54,6 +54,8 @@ export default class AeternityEvent {
             );
         };
 
+        this.webSocketClient.onopen();
+
         this.webSocketClient.onmessage = async (message: any) => {
             if (message.type === 'message' && message.data.includes('payload')) {
                 const data = JSON.parse(message.data);

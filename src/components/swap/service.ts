@@ -30,6 +30,19 @@ export default class SwapService {
         }
     }
 
+    async getByReceiverAfter(address: string, timestamp: string) {
+        const addresses = address.split(';').map((a) => a.toLowerCase());
+        const isMoreThanOneAddress = addresses.length > 1;
+
+        if (isMoreThanOneAddress) {
+            const result = await this.swapRepository.getByReceiversAfter(addresses, timestamp);
+            return result;
+        } else {
+            const result = await this.swapRepository.getByReceiverAfter(addresses[0], timestamp);
+            return result;
+        }
+    }
+
     async getByStatus(status: number) {
         const result = await this.swapRepository.getByStatus(status);
         return result;
@@ -38,6 +51,19 @@ export default class SwapService {
     async getByAddressAndStatus(address: string, status: number) {
         const result = await this.swapRepository.getByAddressAndStatus(address.toLowerCase(), status);
         return result;
+    }
+
+    async getBySenderAndStatus(address: string, status: number) {
+        const addresses = address.split(';').map((a) => a.toLowerCase());
+        const isMoreThanOneAddress = addresses.length > 1;
+
+        if (isMoreThanOneAddress) {
+            const result = await this.swapRepository.getBySendersAndStatus(addresses, status);
+            return result;
+        } else {
+            const result = await this.swapRepository.getBySenderAndStatus(addresses[0], status);
+            return result;
+        }
     }
 
     async create(swap: Swap | Swap[]) {

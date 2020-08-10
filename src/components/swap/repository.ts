@@ -2,6 +2,8 @@ import { ObjectLiteral, getMongoRepository } from 'typeorm';
 
 import Swap from './entity';
 
+import { STATUS } from './constants';
+
 import Log from '../../logger';
 import { cmpIgnoreCase } from '../../utils/common';
 import Emitter from '../../websocket/emitter';
@@ -61,6 +63,38 @@ export default class SwapRepository {
         return this.getInputSwaps(inputSwaps, outputSwaps);
     }
 
+    async getByReceiverAfter(receiver: string, timestamp: string) {
+        const swaps = await this.swapRepository.find({
+            where: {
+                $and: [{ receiver }, { expiration: { $gte: Number(timestamp) } }],
+            },
+        });
+        return swaps;
+    }
+
+    async getByReceiversAfter(receivers: string[], timestamp: string) {
+        const swaps = await this.swapRepository.find({
+            where: {
+                $and: [{ receiver: { $in: receivers } }, { expiration: { $gte: Number(timestamp) } }],
+            },
+        });
+        return swaps;
+    }
+
+    async getBySenderAndStatus(sender: string, status: number) {
+        const swaps = await this.swapRepository.find({ sender, status });
+        return swaps;
+    }
+
+    async getBySendersAndStatus(senders: string[], status: number) {
+        const swaps = await this.swapRepository.find({
+            where: {
+                $and: [{ sender: { $in: senders } }, { status }],
+            },
+        });
+        return swaps;
+    }
+
     async getByStatus(status: number) {
         const swaps = await this.swapRepository.find({ status });
         return this.getInputSwaps(swaps, swaps);
@@ -109,7 +143,10 @@ export default class SwapRepository {
                     p.push({
                         updateOne: {
                             filter: { id: c.id },
-                            update: { $set: { status, completenessTransactionHash: c.transactionHash } },
+                            update:
+                                status === STATUS.EXPIRED
+                                    ? { $set: { status } }
+                                    : { $set: { status, completenessTransactionHash: c.transactionHash } },
                         },
                     });
                 } else {

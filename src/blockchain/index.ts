@@ -3,6 +3,8 @@ import Erc20Event from './erc20';
 import AeternityEvent from './aeternity';
 import BitcoinEvent from './bitcoin';
 import HarmonyEvent from './harmony';
+import AvalancheEvent from './avalanche';
+import MaticEvent from './matic';
 
 import BlockService from '../components/block/service';
 
@@ -17,6 +19,8 @@ const Networks = {
     BTC: BitcoinEvent,
     AE: AeternityEvent,
     ONE: HarmonyEvent,
+    AVA: AvalancheEvent,
+    MATIC: MaticEvent,
 };
 
 export default async () => {

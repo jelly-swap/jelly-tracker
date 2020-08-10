@@ -64,6 +64,19 @@ export default {
             contract: getOsEnv('HARMONY_CONTRACT'),
             originBlock: getOsEnv('HARMONY_ORIGIN_BLOCK'),
             chain: toNumber(getOsEnv('HARMONY_CHAIN')),
+
+        ava: {
+            provider: getOsEnv('AVA_PROVIDER'),
+            contract: getOsEnv('AVA_CONTRACT'),
+            originBlock: toNumber(getOsEnv('AVA_ORIGIN_BLOCK')),
+            chain: getOsEnv('AVA_CHAIN'),
+        },
+
+        matic: {
+            provider: getOsEnv('MATIC_PROVIDER'),
+            contract: getOsEnv('MATIC_CONTRACT'),
+            originBlock: toNumber(getOsEnv('MATIC_ORIGIN_BLOCK')),
+            chain: getOsEnv('MATIC_CHAIN'),
         },
     },
 };

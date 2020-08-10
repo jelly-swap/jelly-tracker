@@ -23,6 +23,11 @@ export default class SwapController {
         return this.swapService.getByAddressAfter(address, expiration);
     }
 
+    getByReceiverAfter(request: Request, response: Response, next: NextFunction) {
+        const { address, expiration } = request.params;
+        return this.swapService.getByReceiverAfter(address, expiration);
+    }
+
     getByStatus(request: Request, response: Response, next: NextFunction) {
         const { status } = request.params;
         return this.swapService.getByStatus(Number(status));
@@ -31,5 +36,10 @@ export default class SwapController {
     getByAddressAndStatus(request: Request, response: Response, next: NextFunction) {
         const { address, status } = request.params;
         return this.swapService.getByAddressAndStatus(address, Number(status));
+    }
+
+    getBySenderAndStatus(request: Request, response: Response, next: NextFunction) {
+        const { address, status } = request.params;
+        return this.swapService.getBySenderAndStatus(address, Number(status));
     }
 }
