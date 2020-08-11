@@ -52,19 +52,23 @@ export default async () => {
 
 const sync = async (events, blockService) => {
     for (const chain in events) {
-        const network = events[chain];
+        try {
+            const network = events[chain];
 
-        const lastBlock = await network.getBlock();
-        const lastSyncedBlock = await blockService.getBlockNumber(chain);
+            const lastBlock = await network.getBlock();
+            const lastSyncedBlock = await blockService.getBlockNumber(chain);
 
-        if (lastSyncedBlock) {
-            Log.info(`Sync ${chain} at block ${lastSyncedBlock}`);
-            await network.getPast(lastSyncedBlock - network.syncBlocksMargin);
-            await blockService.update(chain, lastBlock);
-        } else {
-            Log.info(`Initial Sync ${chain}`);
-            await network.getPast();
-            await blockService.update(chain, lastBlock);
+            if (lastSyncedBlock) {
+                Log.info(`Sync ${chain} at block ${lastSyncedBlock}`);
+                await network.getPast(lastSyncedBlock - network.syncBlocksMargin);
+                await blockService.update(chain, lastBlock);
+            } else {
+                Log.info(`Initial Sync ${chain}`);
+                await network.getPast();
+                await blockService.update(chain, lastBlock);
+            }
+        } catch (err) {
+            Log.error(`Sync error ${err}`);
         }
     }
 };
