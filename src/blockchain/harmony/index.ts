@@ -14,6 +14,7 @@ import Withdraw from '../../components/withdraw/entity';
 import Refund from '../../components/refund/entity';
 
 import Emitter from '../../websocket/emitter';
+import Logger from '../../logger';
 
 export default class EthereumEvent {
     public readonly syncBlocksMargin = Config.syncBlocksMargin;
@@ -47,8 +48,6 @@ export default class EthereumEvent {
         this.contract.events
             .NewContract()
             .on('data', (event) => {
-                console.log('NewContract', event);
-
                 const baseTx = {
                     network: 'ONE',
                     transactionHash: event.transactionHash,
@@ -77,13 +76,11 @@ export default class EthereumEvent {
                     )
                 );
             })
-            .on('error', console.error);
+            .on('error', (err) => Logger.error(`Harmony NewContract ${err}`));
 
         this.contract.events
             .Withdraw()
             .on('data', (event) => {
-                console.log('Withdraw', event);
-
                 const baseTx = {
                     network: 'ONE',
                     transactionHash: event.transactionHash,
@@ -108,13 +105,11 @@ export default class EthereumEvent {
                     )
                 );
             })
-            .on('error', console.error);
+            .on('error', (err) => Logger.error(`Harmony Withdraw ${err}`));
 
         this.contract.events
             .Refund()
             .on('data', (event) => {
-                console.log('Refund', event);
-
                 const baseTx = {
                     network: 'ONE',
                     transactionHash: event.transactionHash,
@@ -138,12 +133,12 @@ export default class EthereumEvent {
                     )
                 );
             })
-            .on('error', console.error);
+            .on('error', (err) => Logger.error(`Harmony Refund ${err}`));
     }
 
     async getPast(__fromBlock?: number) {
         const block = await this.getBlock();
-        const fromBlock = '0x' + new BN(parseInt(block) - 1000).toString('hex');
+        const fromBlock = '0x' + new BN(parseInt(block) - this.syncBlocksMargin).toString('hex');
 
         if (block > 0) {
             const swaps: Swap[] = [];
