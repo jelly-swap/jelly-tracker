@@ -79,11 +79,11 @@ export default class Swap {
         this.expiration = expiration;
         this.id = id;
         this.hashLock = hashLock;
-        this.sender = sender.toLowerCase();
-        this.receiver = receiver.toLowerCase();
+        this.sender = sender?.toLowerCase();
+        this.receiver = receiver?.toLowerCase();
         this.outputNetwork = outputNetwork;
         this.outputAddress = outputAddress;
-        this.refundAddress = refundAddress.toLowerCase();
+        this.refundAddress = refundAddress?.toLowerCase();
         this.status = status;
     }
 }

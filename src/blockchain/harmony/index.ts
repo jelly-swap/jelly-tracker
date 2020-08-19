@@ -154,7 +154,8 @@ export default class EthereumEvent {
             ]);
 
             logs?.result?.forEach((log) => {
-                const topics = log.topics;
+                const eventType = log.topics[0];
+                const topics = log.topics.slice(1);
 
                 const baseTx = {
                     network: 'ONE',
@@ -162,10 +163,10 @@ export default class EthereumEvent {
                     blockNumber: parseInt(log.blockNumber),
                 };
 
-                switch (topics[0]) {
+                switch (eventType) {
                     case '0x767d0ffbc3d16cc51fc05770a22976e4b0fda9198e37878b76979429b2d5d88c': {
                         const inputs = this.contract.abiModel.getEvent('NewContract').inputs;
-                        const decoded = this.contract.abiCoder.decodeLog(inputs, log.data, log.topics);
+                        const decoded = this.contract.abiCoder.decodeLog(inputs, log.data, topics);
                         const swap = { ...baseTx, ...getSwap(decoded) };
 
                         swaps.push(
@@ -190,7 +191,7 @@ export default class EthereumEvent {
 
                     case '0x6fa50d56c31f3efe0cb6ff06232bffce8fe8c4155e3cbb6f2d79dd12631c2522': {
                         const inputs = this.contract.abiModel.getEvent('Refund').inputs;
-                        const decoded = this.contract.abiCoder.decodeLog(inputs, log.data, log.topics);
+                        const decoded = this.contract.abiCoder.decodeLog(inputs, log.data, topics);
                         const refund = { ...baseTx, ...getRefund(decoded) };
                         refunds.push(
                             new Refund(
@@ -208,7 +209,7 @@ export default class EthereumEvent {
 
                     case '0x2d3a5ed13d0553389b4078e01264416362e34d23520fda797fbc17f3905ed131': {
                         const inputs = this.contract.abiModel.getEvent('Withdraw').inputs;
-                        const decoded = this.contract.abiCoder.decodeLog(inputs, log.data, log.topics);
+                        const decoded = this.contract.abiCoder.decodeLog(inputs, log.data, topics);
                         const withdraw = { ...baseTx, ...getWithdraw(decoded) };
                         withdraws.push(
                             new Withdraw(
