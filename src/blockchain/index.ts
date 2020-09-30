@@ -5,6 +5,7 @@ import BitcoinEvent from './bitcoin';
 import HarmonyEvent from './harmony';
 import AvalancheEvent from './avalanche';
 import MaticEvent from './matic';
+import BinanceEvent from './binance';
 
 import BlockService from '../components/block/service';
 
@@ -21,6 +22,7 @@ const Networks = {
     ONE: HarmonyEvent,
     AVA: AvalancheEvent,
     MATIC: MaticEvent,
+    BNB: BinanceEvent,
 };
 
 export default async () => {

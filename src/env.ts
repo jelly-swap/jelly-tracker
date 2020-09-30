@@ -74,6 +74,13 @@ export default {
             chain: getOsEnv('AVA_CHAIN'),
         },
 
+        bnb: {
+            provider: getOsEnv('BNB_PROVIDER'),
+            contract: getOsEnv('BNB_CONTRACT'),
+            originBlock: toNumber(getOsEnv('BNB_ORIGIN_BLOCK')),
+            chain: getOsEnv('BNB_CHAIN'),
+        },
+
         matic: {
             provider: getOsEnv('MATIC_PROVIDER'),
             contract: getOsEnv('MATIC_CONTRACT'),
