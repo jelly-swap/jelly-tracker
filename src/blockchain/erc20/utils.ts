@@ -39,6 +39,6 @@ const addressToTokenMap: AddressToTokenType =
               '0x6b175474e89094c44da98b954eedeac495271d0f': 'DAI',
               '0x4de25f080e02e8b3fdd450f0b2b9ed22c7e6cf0a': 'CAPT',
               '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': 'USDC',
-              '0x0327112423f3a68efdf1fcf402f6c5cb9f7c33fd': 'BTC++',
+              '0x8dAEBADE922dF735c38C80C7eBD708Af50815fAa': 'TBTC',
           }
         : { '0x2d69ad895797c880abce92437788047ba0eb7ff6': 'DAI' };
