@@ -2,6 +2,7 @@ import EthereumEvent from './ethereum';
 import Erc20Event from './erc20';
 import AeternityEvent from './aeternity';
 import BitcoinEvent from './bitcoin';
+import AlgorandEvent from './algorand';
 import HarmonyEvent from './harmony';
 import AvalancheEvent from './avalanche';
 import MaticEvent from './matic';
@@ -23,6 +24,7 @@ const Networks = {
     AVA: AvalancheEvent,
     MATIC: MaticEvent,
     BNB: BinanceEvent,
+    ALGO: AlgorandEvent
 };
 
 export default async () => {

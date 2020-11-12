@@ -52,6 +52,10 @@ export default {
             provider: getOsEnv('BTC_PROVIDER'),
         },
 
+        algo: {
+            provider: getOsEnv('ALGO_PROVIDER'),
+        },
+
         ae: {
             api: getOsEnv('AE_API'),
             ws: getOsEnv('AE_WS'),
