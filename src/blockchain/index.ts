@@ -24,7 +24,7 @@ const Networks = {
     AVA: AvalancheEvent,
     MATIC: MaticEvent,
     BNB: BinanceEvent,
-    ALGO: AlgorandEvent
+    ALGO: AlgorandEvent,
 };
 
 export default async () => {
