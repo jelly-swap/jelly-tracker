@@ -25,6 +25,9 @@ export default class Swap {
     expiration: number;
 
     @Column()
+    expireBlock: number;
+
+    @Column()
     @Index({ unique: true })
     id: string;
 

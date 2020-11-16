@@ -9,7 +9,6 @@ import Config from './config';
 import Emitter from '../../websocket/emitter';
 
 export default class BitcoinEvent {
-    public readonly syncBlocksMargin = Config.syncBlocksMargin;
     private emitter: Emitter;
     private lastBlock: number;
 
@@ -58,7 +57,12 @@ export default class BitcoinEvent {
     }
 
     async _getEvents(fromBlock = 0) {
-        const swapResponse = await axios.get(`${Config.apiUrl}/swap/block/${fromBlock}`);
+        const [swapResponse, withdrawResponse, refundResponse] = await Promise.all([
+            axios.get(`${Config.apiUrl}/swap/block/${fromBlock}`),
+            axios.get(`${Config.apiUrl}/withdraw/block/${fromBlock}`),
+            axios.get(`${Config.apiUrl}/refund/block/${fromBlock}`),
+        ]);
+
         const swaps: Swap[] = (swapResponse.data as Array<Object>).reduce((p: any, c: any) => {
             p.push(
                 new Swap(
@@ -81,7 +85,6 @@ export default class BitcoinEvent {
             return p;
         }, [] as any);
 
-        const withdrawResponse = await axios.get(`${Config.apiUrl}/withdraw/block/${fromBlock}`);
         const withdraws = (withdrawResponse.data as Array<Object>).reduce((p: any, c: any) => {
             p.push(
                 new Withdraw('BTC', c.transactionHash, c.blockHeight, c.id, c.secret, c.hashLock, c.sender, c.receiver)
@@ -89,7 +92,6 @@ export default class BitcoinEvent {
             return p;
         }, [] as any);
 
-        const refundResponse = await axios.get(`${Config.apiUrl}/refund/block/${fromBlock}`);
         const refunds = (refundResponse.data as Array<Object>).reduce((p: any, c: any) => {
             p.push(new Refund('BTC', c.transactionHash, c.blockHeight, c.id, c.hashLock, c.sender, c.receiver));
             return p;
