@@ -37,7 +37,7 @@ const addressToTokenMap: AddressToTokenType =
         ? {
               '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599': 'WBTC',
               '0x6b175474e89094c44da98b954eedeac495271d0f': 'DAI',
-              '0x4de25f080e02e8b3fdd450f0b2b9ed22c7e6cf0a': 'CAPT',
+              '0x03a5d1d4c764decf50ae12decbed8a51a421faa0': 'CAPT',
               '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48': 'USDC',
               '0x8daebade922df735c38c80c7ebd708af50815faa': 'TBTC',
           }
