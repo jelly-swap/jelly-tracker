@@ -85,6 +85,13 @@ export default {
             chain: getOsEnv('BNB_CHAIN'),
         },
 
+        xdc: {
+            provider: getOsEnv('XDC_PROVIDER'),
+            contract: getOsEnv('XDC_CONTRACT'),
+            originBlock: toNumber(getOsEnv('XDC_ORIGIN_BLOCK')),
+            chain: getOsEnv('XDC_CHAIN'),
+        },
+
         matic: {
             provider: getOsEnv('MATIC_PROVIDER'),
             contract: getOsEnv('MATIC_CONTRACT'),

@@ -7,6 +7,7 @@ import HarmonyEvent from './harmony';
 import AvalancheEvent from './avalanche';
 import MaticEvent from './matic';
 import BinanceEvent from './binance';
+import XinfinEvent from './xinfin';
 
 import BlockService from '../components/block/service';
 
@@ -24,6 +25,7 @@ const Networks = {
     AVA: AvalancheEvent,
     MATIC: MaticEvent,
     BNB: BinanceEvent,
+    XDC: XinfinEvent,
     ALGO: AlgorandEvent,
 };
 
