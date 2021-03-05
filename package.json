@@ -43,7 +43,8 @@
         "typescript": "^3.9.5",
         "websocket": "^1.0.31",
         "winston": "^3.2.1",
-        "ws": "^7.3.0"
+        "ws": "^7.3.0",
+        "xdc3": "^1.2.1211"
     },
     "devDependencies": {
         "@types/body-parser": "^1.19.0",

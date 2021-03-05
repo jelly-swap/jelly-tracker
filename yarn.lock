@@ -2635,6 +2635,11 @@ ws@^7.3.0:
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.3.0.tgz#4b2f7f219b3d3737bc1a2fbf145d825b94d38ffd"
   integrity sha512-iFtXzngZVXPGgpTlP1rBqsUK82p9tKqsWRPg5L56egiljujJT3vGAYnHANvFxBieXrTFavhzhxW52jnaWV+w2w==
 
+xdc3@^1.2.1211:
+  version "1.2.1211"
+  resolved "https://registry.yarnpkg.com/xdc3/-/xdc3-1.2.1211.tgz#a102a17b38433a4e76c66eaed9590b6b73fc2ffc"
+  integrity sha512-MADTGlX2NAi9qyIq0xQILtRqthjikXYEAsTx/urG4QMCMYRgtkzfgYk0gCIzn23alJe5Fl+BeTOl/OVzXWHy1g==
+
 xml2js@^0.4.17:
   version "0.4.23"
   resolved "https://registry.yarnpkg.com/xml2js/-/xml2js-0.4.23.tgz#a0c69516752421eb2ac758ee4d4ccf58843eac66"
