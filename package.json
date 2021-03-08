@@ -5,6 +5,7 @@
     "author": "kraikov",
     "license": "MIT",
     "scripts": {
+        "heroku-prebuild": "npm install -g lerna@3.20.0",
         "start": "ts-node src/index.ts",
         "start-prod": "cross-env NODE_ENV=production ts-node src/index.ts",
         "start-dev": "cross-env NODE_ENV=development ts-node src/index.ts"
