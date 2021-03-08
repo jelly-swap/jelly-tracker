@@ -1,4 +1,5 @@
-import { Contract, providers } from 'ethers';
+import Web3 from 'xdc3';
+
 
 import Config from './config';
 
@@ -9,96 +10,107 @@ import Withdraw from '../../components/withdraw/entity';
 import Refund from '../../components/refund/entity';
 
 import Emitter from '../../websocket/emitter';
+import Logger from '../../logger';
 
 export default class AvalancheEvent {
     public readonly syncBlocksMargin = Config.syncBlocksMargin;
-    public provider: providers.BaseProvider;
-    private contract: Contract;
+    public provider: any;
+    private contract: any;
     private emitter: Emitter;
+    private web3: any;
 
     constructor() {
-        this.provider = new providers.JsonRpcProvider(Config.provider);
-        this.contract = new Contract(Config.contractAddress, Config.abi, this.provider);
+        this.web3 = new Web3(Config.provider);
+        this.provider = new this.web3.providers.HttpProvider(Config.provider);
+        this.contract = new this.web3.eth.Contract(Config.abi, Config.contractAddress);
         this.emitter = Emitter.Instance;
     }
 
     async getBlock() {
-        return await this.provider.getBlockNumber();
+        return await this.web3.eth.getBlockNumber();
     }
 
-    subscribe() {
-        this.contract.on(
-            {
-                address: Config.contractAddress,
-            },
-            (log) => {
+    subscribe(){
+        this.contract.events
+            .NewContract()
+            .on('data', (event) => {
                 const baseTx = {
                     network: 'XDC',
-                    transactionHash: log.transactionHash,
-                    blockNumber: log.blockNumber,
+                    transactionHash: event.transactionHash,
+                    blockNumber: parseInt(event.blockNumber),
                 };
+                const swap = { ...baseTx, ...getSwap(event.returnValues) };
 
-                switch (log.event) {
-                    case 'NewContract': {
-                        const swap = { ...baseTx, ...getSwap(log.args) };
-                        this.emitter.emit(
-                            'SWAPS',
-                            new Swap(
-                                swap.network,
-                                swap.transactionHash,
-                                swap.blockNumber,
-                                swap.inputAmount.toString(),
-                                swap.outputAmount.toString(),
-                                Number(swap.expiration),
-                                swap.id,
-                                swap.hashLock,
-                                swap.sender,
-                                swap.receiver,
-                                swap.outputNetwork,
-                                swap.outputAddress
-                            )
-                        );
-                        break;
-                    }
+                this.emitter.emit(
+                    'SWAPS',
+                    new Swap(
+                        swap.network,
+                        swap.transactionHash,
+                        swap.blockNumber,
+                        swap.inputAmount.toString(),
+                        swap.outputAmount.toString(),
+                        Number(swap.expiration),
+                        swap.id,
+                        swap.hashLock,
+                        swap.sender,
+                        swap.receiver,
+                        swap.outputNetwork,
+                        swap.outputAddress
+                    )
+                );
+            })
+            .on('error', (err) => Logger.error(`Xinfin NewContract ${err}`));
 
-                    case 'Withdraw': {
-                        const withdraw = { ...baseTx, ...getWithdraw(log.args) };
-                        this.emitter.emit(
-                            'WITHDRAWS',
-                            new Withdraw(
-                                withdraw.network,
-                                withdraw.transactionHash,
-                                withdraw.blockNumber,
-                                withdraw.id,
-                                withdraw.secret,
-                                withdraw.hashLock,
-                                withdraw.sender,
-                                withdraw.receiver
-                            )
-                        );
-                        break;
-                    }
+        this.contract.events
+            .Withdraw()
+            .on('data', (event) => {
+                const baseTx = {
+                    network: 'XDC',
+                    transactionHash: event.transactionHash,
+                    blockNumber: parseInt(event.blockNumber),
+                };
+                const withdraw = { ...baseTx, ...getWithdraw(event.returnValues) };
 
-                    case 'Refund': {
-                        const refund = { ...baseTx, ...getRefund(log.args) };
-                        this.emitter.emit(
-                            'REFUNDS',
-                            new Refund(
-                                refund.network,
-                                refund.transactionHash,
-                                refund.blockNumber,
-                                refund.id,
-                                refund.hashLock,
-                                refund.sender,
-                                refund.receiver
-                            )
-                        );
+                this.emitter.emit(
+                    'WITHDRAWS',
+                    new Withdraw(
+                        withdraw.network,
+                        withdraw.transactionHash,
+                        withdraw.blockNumber,
+                        withdraw.id,
+                        withdraw.secret,
+                        withdraw.hashLock,
+                        withdraw.sender,
+                        withdraw.receiver
+                    )
+                );
+            })
+            .on('error', (err) => Logger.error(`Xinfin Withdraw ${err}`));
 
-                        break;
-                    }
-                }
-            }
-        );
+        this.contract.events
+            .Refund()
+            .on('data', (event) => {
+                const baseTx = {
+                    network: 'XDC',
+                    transactionHash: event.transactionHash,
+                    blockNumber: parseInt(event.blockNumber),
+                };
+                const refund = { ...baseTx, ...getRefund(event.returnValues) };
+
+                this.emitter.emit(
+                    'REFUNDS',
+                    new Refund(
+                        refund.network,
+                        refund.transactionHash,
+                        refund.blockNumber,
+                        refund.id,
+                        refund.hashLock,
+                        refund.sender,
+                        refund.receiver
+                    )
+                );
+            })
+            .on('error', (err) => Logger.error(`XDC Refund ${err}`));       
     }
 
     async getPast(fromBlock?: number) {
@@ -106,11 +118,11 @@ export default class AvalancheEvent {
         const withdraws: Withdraw[] = [];
         const refunds: Refund[] = [];
 
-        const result = await this.contract.queryFilter(
+        const result = await this.contract.getPastEvents('allEvents',
             {
-                address: Config.contractAddress,
+                fromBlock: '0x' + (fromBlock || Config.originBlock).toString(16),
+                toBlock: 'latest'
             },
-            fromBlock || Config.originBlock
         );
 
         result.forEach((log) => {
@@ -122,7 +134,7 @@ export default class AvalancheEvent {
 
             switch (log.event) {
                 case 'NewContract': {
-                    const swap = { ...baseTx, ...getSwap(log.args) };
+                    const swap = { ...baseTx, ...getSwap(log.returnValues) };
                     swaps.push(
                         new Swap(
                             swap.network,
@@ -144,7 +156,7 @@ export default class AvalancheEvent {
                 }
 
                 case 'Withdraw': {
-                    const withdraw = { ...baseTx, ...getWithdraw(log.args) };
+                    const withdraw = { ...baseTx, ...getWithdraw(log.returnValues) };
                     withdraws.push(
                         new Withdraw(
                             withdraw.network,
@@ -162,7 +174,7 @@ export default class AvalancheEvent {
                 }
 
                 case 'Refund': {
-                    const refund = { ...baseTx, ...getRefund(log.args) };
+                    const refund = { ...baseTx, ...getRefund(log.returnValues) };
                     refunds.push(
                         new Refund(
                             refund.network,
