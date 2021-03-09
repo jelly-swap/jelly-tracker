@@ -5,7 +5,9 @@
     "author": "kraikov",
     "license": "MIT",
     "engines": {
-        "node": "12.x"
+        "node": "12.x",
+        "npm": "6.13.x",
+        "yarn": "1.22.x"
     },
     "scripts": {
         "heroku-prebuild": "npm install -g lerna@3.20.0",
