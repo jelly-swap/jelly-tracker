@@ -12,17 +12,21 @@ import Refund from '../../components/refund/entity';
 import Emitter from '../../websocket/emitter';
 import Logger from '../../logger';
 
-export default class AvalancheEvent {
+export default class XinfinEvent {
     public readonly syncBlocksMargin = Config.syncBlocksMargin;
     public provider: any;
+    public wsProvider: any;
     private contract: any;
+    private wsContract: any;
     private emitter: Emitter;
     private web3: any;
 
     constructor() {
         this.web3 = new Web3(Config.provider);
         this.provider = new this.web3.providers.HttpProvider(Config.provider);
+        this.wsProvider =  new this.web3.providers.WebsocketProvider(Config.providerWs);
         this.contract = new this.web3.eth.Contract(Config.abi, Config.contractAddress);
+        this.wsContract = new (new Web3(this.wsProvider)).eth.Contract(Config.abi, Config.contractAddress);
         this.emitter = Emitter.Instance;
     }
 
@@ -31,7 +35,7 @@ export default class AvalancheEvent {
     }
 
     subscribe(){
-        this.contract.events
+        this.wsContract.events
             .NewContract()
             .on('data', (event) => {
                 const baseTx = {
@@ -61,7 +65,7 @@ export default class AvalancheEvent {
             })
             .on('error', (err) => Logger.error(`Xinfin NewContract ${err}`));
 
-        this.contract.events
+        this.wsContract.events
             .Withdraw()
             .on('data', (event) => {
                 const baseTx = {
@@ -87,7 +91,7 @@ export default class AvalancheEvent {
             })
             .on('error', (err) => Logger.error(`Xinfin Withdraw ${err}`));
 
-        this.contract.events
+        this.wsContract.events
             .Refund()
             .on('data', (event) => {
                 const baseTx = {

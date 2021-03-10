@@ -87,6 +87,7 @@ export default {
 
         xdc: {
             provider: getOsEnv('XDC_PROVIDER'),
+            providerWs: getOsEnv('XDC_WS_PROVIDER'),
             contract: getOsEnv('XDC_CONTRACT'),
             originBlock: toNumber(getOsEnv('XDC_ORIGIN_BLOCK')),
             chain: getOsEnv('XDC_CHAIN'),
