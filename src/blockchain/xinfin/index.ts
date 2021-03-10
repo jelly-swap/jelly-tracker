@@ -24,7 +24,7 @@ export default class XinfinEvent {
     constructor() {
         this.web3 = new Web3(Config.provider);
         this.provider = new this.web3.providers.HttpProvider(Config.provider);
-        this.wsProvider =  new this.web3.provider.WebsocketProvider(Config.providerWs);
+        this.wsProvider =  new this.web3.providers.WebsocketProvider(Config.providerWs);
         this.contract = new this.web3.eth.Contract(Config.abi, Config.contractAddress);
         this.wsContract = new (new Web3(this.wsProvider)).eth.Contract(Config.abi, Config.contractAddress);
         this.emitter = Emitter.Instance;
