@@ -16,6 +16,7 @@ export default class AvalancheEvent {
     public readonly syncBlocksMargin = Config.syncBlocksMargin;
     public provider: any;
     private contract: any;
+    private wsContract: any;
     private emitter: Emitter;
     private web3: any;
 
@@ -23,6 +24,7 @@ export default class AvalancheEvent {
         this.web3 = new Web3(Config.provider);
         this.provider = new this.web3.providers.HttpProvider(Config.provider);
         this.contract = new this.web3.eth.Contract(Config.abi, Config.contractAddress);
+        this.wsContract = (new Web3(Config.providerWs)).eth.Contract(Config.abi, Config.contractAddress);
         this.emitter = Emitter.Instance;
     }
 
@@ -31,7 +33,7 @@ export default class AvalancheEvent {
     }
 
     subscribe(){
-        this.contract.events
+        this.wsContract.events
             .NewContract()
             .on('data', (event) => {
                 const baseTx = {
@@ -61,7 +63,7 @@ export default class AvalancheEvent {
             })
             .on('error', (err) => Logger.error(`Xinfin NewContract ${err}`));
 
-        this.contract.events
+        this.wsContract.events
             .Withdraw()
             .on('data', (event) => {
                 const baseTx = {
@@ -87,7 +89,7 @@ export default class AvalancheEvent {
             })
             .on('error', (err) => Logger.error(`Xinfin Withdraw ${err}`));
 
-        this.contract.events
+        this.wsContract.events
             .Refund()
             .on('data', (event) => {
                 const baseTx = {
