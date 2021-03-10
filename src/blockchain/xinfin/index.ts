@@ -24,7 +24,7 @@ export default class AvalancheEvent {
         this.web3 = new Web3(Config.provider);
         this.provider = new this.web3.providers.HttpProvider(Config.provider);
         this.contract = new this.web3.eth.Contract(Config.abi, Config.contractAddress);
-        this.wsContract = (new Web3(Config.providerWs)).eth.Contract(Config.abi, Config.contractAddress);
+        this.wsContract = new (new Web3(Config.providerWs)).eth.Contract(Config.abi, Config.contractAddress);
         this.emitter = Emitter.Instance;
     }
 
