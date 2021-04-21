@@ -5,7 +5,7 @@
     "author": "kraikov",
     "license": "MIT",
     "engines": {
-        "node": "14.x",
+        "node": "12.x",
         "npm": "6.13.x",
         "yarn": "1.22.x"
     },
