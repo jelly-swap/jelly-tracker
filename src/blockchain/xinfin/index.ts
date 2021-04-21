@@ -11,110 +11,32 @@ import Refund from '../../components/refund/entity';
 
 import Emitter from '../../websocket/emitter';
 import Logger from '../../logger';
+const SYNC_PERIOD = 10000; //10 seconds
 
 export default class XinfinEvent {
     public readonly syncBlocksMargin = Config.syncBlocksMargin;
     public provider: any;
-    public wsProvider: any;
     private contract: any;
-    private wsContract: any;
     private emitter: Emitter;
-    private web3: any;
+    private lastScanned: number;
 
     constructor() {
-        this.web3 = new Web3(Config.provider);
-        this.provider = new this.web3.providers.HttpProvider(Config.provider);
-        this.wsProvider =  new this.web3.providers.WebsocketProvider(Config.providerWs);
-        this.contract = new this.web3.eth.Contract(Config.abi, Config.contractAddress);
-        this.wsContract = new (new Web3(this.wsProvider)).eth.Contract(Config.abi, Config.contractAddress);
+        this.provider= new Web3(Config.provider);
+        this.contract = new this.provider.eth.Contract(Config.abi, Config.contractAddress);
         this.emitter = Emitter.Instance;
     }
 
     async getBlock() {
-        return await this.web3.eth.getBlockNumber();
+        console.log("xinfin", await this.provider.eth.getBlockNumber());
+        return await this.provider.eth.getBlockNumber();
     }
 
-    subscribe(){
-        this.wsContract.events
-            .NewContract()
-            .on('data', (event) => {
-                const baseTx = {
-                    network: 'XDC',
-                    transactionHash: event.transactionHash,
-                    blockNumber: parseInt(event.blockNumber),
-                };
-                const swap = { ...baseTx, ...getSwap(event.returnValues) };
-
-                this.emitter.emit(
-                    'SWAPS',
-                    new Swap(
-                        swap.network,
-                        swap.transactionHash,
-                        swap.blockNumber,
-                        swap.inputAmount.toString(),
-                        swap.outputAmount.toString(),
-                        Number(swap.expiration),
-                        swap.id,
-                        swap.hashLock,
-                        swap.sender,
-                        swap.receiver,
-                        swap.outputNetwork,
-                        swap.outputAddress
-                    )
-                );
-            })
-            .on('error', (err) => Logger.error(`Xinfin NewContract ${err}`));
-
-        this.wsContract.events
-            .Withdraw()
-            .on('data', (event) => {
-                const baseTx = {
-                    network: 'XDC',
-                    transactionHash: event.transactionHash,
-                    blockNumber: parseInt(event.blockNumber),
-                };
-                const withdraw = { ...baseTx, ...getWithdraw(event.returnValues) };
-
-                this.emitter.emit(
-                    'WITHDRAWS',
-                    new Withdraw(
-                        withdraw.network,
-                        withdraw.transactionHash,
-                        withdraw.blockNumber,
-                        withdraw.id,
-                        withdraw.secret,
-                        withdraw.hashLock,
-                        withdraw.sender,
-                        withdraw.receiver
-                    )
-                );
-            })
-            .on('error', (err) => Logger.error(`Xinfin Withdraw ${err}`));
-
-        this.wsContract.events
-            .Refund()
-            .on('data', (event) => {
-                const baseTx = {
-                    network: 'XDC',
-                    transactionHash: event.transactionHash,
-                    blockNumber: parseInt(event.blockNumber),
-                };
-                const refund = { ...baseTx, ...getRefund(event.returnValues) };
-
-                this.emitter.emit(
-                    'REFUNDS',
-                    new Refund(
-                        refund.network,
-                        refund.transactionHash,
-                        refund.blockNumber,
-                        refund.id,
-                        refund.hashLock,
-                        refund.sender,
-                        refund.receiver
-                    )
-                );
-            })
-            .on('error', (err) => Logger.error(`XDC Refund ${err}`));       
+    async subscribe(){
+        setInterval(async () => {
+            const latestBlock = await this.getBlock();
+            await this.getPast(this.lastScanned)
+            this.lastScanned = latestBlock + 1;
+        }, SYNC_PERIOD);
     }
 
     async getPast(fromBlock?: number) {
