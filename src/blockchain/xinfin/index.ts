@@ -1,6 +1,5 @@
 import Web3 from 'xdc3';
 
-
 import Config from './config';
 
 import { getRefund, getWithdraw, getSwap } from './utils';
@@ -8,9 +7,8 @@ import { getRefund, getWithdraw, getSwap } from './utils';
 import Swap from '../../components/swap/entity';
 import Withdraw from '../../components/withdraw/entity';
 import Refund from '../../components/refund/entity';
-
 import Emitter from '../../websocket/emitter';
-import Logger from '../../logger';
+
 const SYNC_PERIOD = 10000; //10 seconds
 
 export default class XinfinEvent {
@@ -21,20 +19,19 @@ export default class XinfinEvent {
     private lastScanned: number;
 
     constructor() {
-        this.provider= new Web3(Config.provider);
+        this.provider = new Web3(Config.provider);
         this.contract = new this.provider.eth.Contract(Config.abi, Config.contractAddress);
         this.emitter = Emitter.Instance;
     }
 
     async getBlock() {
-        console.log("xinfin", await this.provider.eth.getBlockNumber());
         return await this.provider.eth.getBlockNumber();
     }
 
-    async subscribe(){
+    async subscribe() {
         setInterval(async () => {
             const latestBlock = await this.getBlock();
-            await this.getPast(this.lastScanned)
+            await this.getPast(this.lastScanned);
             this.lastScanned = latestBlock + 1;
         }, SYNC_PERIOD);
     }
@@ -44,12 +41,10 @@ export default class XinfinEvent {
         const withdraws: Withdraw[] = [];
         const refunds: Refund[] = [];
 
-        const result = await this.contract.getPastEvents('allEvents',
-            {
-                fromBlock: '0x' + (fromBlock || Config.originBlock).toString(16),
-                toBlock: 'latest'
-            },
-        );
+        const result = await this.contract.getPastEvents('allEvents', {
+            fromBlock: '0x' + (fromBlock || Config.originBlock).toString(16),
+            toBlock: 'latest',
+        });
 
         result.forEach((log) => {
             const baseTx = {

@@ -4,11 +4,6 @@
     "main": "index.js",
     "author": "kraikov",
     "license": "MIT",
-    "engines": {
-        "node": "12.x",
-        "npm": "6.13.x",
-        "yarn": "1.22.x"
-    },
     "scripts": {
         "start": "ts-node src/index.ts",
         "start-prod": "cross-env NODE_ENV=production ts-node src/index.ts",
