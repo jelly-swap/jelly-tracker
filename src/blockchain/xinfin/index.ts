@@ -9,7 +9,7 @@ import Withdraw from '../../components/withdraw/entity';
 import Refund from '../../components/refund/entity';
 import Emitter from '../../websocket/emitter';
 
-const SYNC_PERIOD = 10000; //10 seconds
+const SYNC_PERIOD = 20000; //20 seconds
 
 export default class XinfinEvent {
     public readonly syncBlocksMargin = Config.syncBlocksMargin;
@@ -29,6 +29,7 @@ export default class XinfinEvent {
     }
 
     async subscribe() {
+        this.lastScanned = await this.getBlock();
         setInterval(async () => {
             const latestBlock = await this.getBlock();
             await this.getPast(this.lastScanned);
