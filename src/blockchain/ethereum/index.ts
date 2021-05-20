@@ -17,7 +17,7 @@ export default class EthereumEvent {
     private emitter: Emitter;
 
     constructor() {
-        this.provider = new providers.JsonRpcProvider(Config.chain, Config.providerUrl);
+        this.provider = new providers.JsonRpcProvider(Config.providerUrl, Config.chain);
         this.contract = new Contract(Config.contractAddress, Config.abi, this.provider);
         this.emitter = Emitter.Instance;
     }
