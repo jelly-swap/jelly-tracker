@@ -14,7 +14,7 @@ export default class Erc20Event {
     private emitter: Emitter;
 
     constructor(provider?: providers.BaseProvider) {
-        this.provider = provider || new providers.InfuraProvider(Config.chain, Config.infuraKey);
+        this.provider = provider || new providers.JsonRpcProvider(Config.chain, Config.providerUrl);
         this.contract = new Contract(Config.contractAddress, Config.abi, this.provider);
         this.emitter = Emitter.Instance;
     }
